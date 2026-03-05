@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "specialized",
+  "name": "[ES-CMP][V3] Create and Update Task from Work Request",
+  "output": {
+    "type": "json",
+    "schema": {
+      "type": "object",
+      "required": [
+        "execution_status"
+      ],
+      "properties": {
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Present when execution_status is 'Failed'. Explains why the agent stopped."
+        },
+        "task_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The ID of the newly created task when execution_status is 'Task created successfully'."
+        },
+        "due_date": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "campaign_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The mapped campaign ID used to create the task."
+        },
+        "cmp_task_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The URL of the created CMP task when execution is successful."
+        },
+        "execution_status": {
+          "enum": [
+            "Failed",
+            "Task created successfully"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "description": null
+  },
+  "version": "1.0.0",
+  "agent_id": "create-and-update-task-from-work-request-v-3",
+  "file_urls": [],
+  "is_active": true,
+  "creativity": 0.1,
+  "is_deleted": false,
+  "parameters": [
+    {
+      "name": "work_request_object",
+      "type": "object",
+      "default": null,
+      "required": true,
+      "description": "object containing \"proceed_status\", \"work_request_id\", \"template_name\", \"workflow_id\", \"workflow_name\", \"status\", \"assignee_name\", \"assignee_id\", \"campaign\", \"supporting_activity\", \"due_date\", \"channel\", \"task_title\""
+    }
+  ],
+  "description": "create task from work request based on extracted work request metadata and update task metadata",
+  "enabled_tools": [
+    "update_task",
+    "update_task_substep",
+    "get_cmp_resource",
+    "create_task_from_work_request",
+    "send_email"
+  ],
+  "agent_metadata": null,
+  "inference_type": "simple",
+  "prompt_template": "## Input\n\n1. [[work_request_object]]​ is an object containing \"proceed_status\", \"work_request_id\", \"template_name\", \"workflow_id\", \"workflow_name\", \"status\", \"assignee_name\", \"assignee_id\", \"campaign\", \"supporting_activity\", \"due_date\", \"channel\", \"task_title\"\n2. Define campaign_mapping_object :\n\n```\n   {\n     \"[ES CMP] Test Campaign\": \"69228e01dc2727478b5f93ea\",\n     \"[ES-CMP] Test Opal Usecase - Campaign\": \"6903266dd19827a999a72490\",\n     \"Event: Test Campaign\": \"68f243baac75a43a53dfb70a\",\n     \"Captives & Fronting (2025)\": \"6967c4318dbb9dc09d43b966\",\n     \"Event: Baden Baden (2025)\": \"6967c3b18dbb9dc09d4342a6\",\n     \"Event: RVS Monte Carlo (2025)\": \"692d9822465fe318491a02ef\",\n     \"Financial & Structured Solutions (2025)\": \"6967c3ce8dbb9dc09d438c29\",\n     \"Forward in Life (2025)\" : \"692d9845465fe318491a1a0c\",\n     \"IP/PULSE & Network (2025)\": \"692d985c465fe318491a612c\",\n     \"RDS Platform Overall (2025)\": \"6967c3ee8dbb9dc09d43a0fd\",\n     \"RDS Property Exposure (2025)\": \"6967c4068dbb9dc09d43a95f\",\n     \"Reinsurance Recalibrated (2025)\": \"692d9831465fe318491a062a\"\n   }\n```\n\n---\n\n## Process\n\n1. let campaign_name = [[work_request_object]] [\"campaign\"]\n\n2. call `create_task_from_work_request` with:\n\n   1. work_request_id = [[work_request_object]] [\"work_request_id\"]\n   2. title = [[work_request_object]][\"task_title\"]\n   3. campaign_id = campaign_mapping_object[campaign_name]\n   4. due_at = [[work_request_object]]​[\"due_date\"]\n   5. owner_id = [[work_request_object]] [\"assignee_id\"]\n   6. workflow_id = [[work_request_object]] [\"workflow_id\"]\n   7. let task_id = newly_created_task_id\n\n3. call `get_cmp_resource` with :\n\n   1. resource_type = \"task\"\n   2. resource_id = task_id\n   3. extract from output :\n      1. first_workflow_step_name\n      2. cmp_task_url\n      3. owner_email_address\n\n4. call `update_task_substep` with :\n\n   1. task_id = task_id\n   2. step_name = first_workflow_step_name\n   3. assignee_type = \"user\"\n   4. assignee_name = [[work_request_object]] [\"assignee_name\"]\n\n5. call `send_email` with:\n\n   1. recipient_emails = owner_email_address\n   2. cc_emails = [\"[Neil.Mullarkey@optimizely.com](mailto:Neil.Mullarkey@optimizely.com)\", \"[suriya.disha@optimizely.com](mailto:suriya.disha@optimizely.com)\", \"[Nicola.Dack@optimizely.com](mailto:Nicola.Dack@optimizely.com)\", \"[mehreen.rahman@optimizely.com\"](mailto:mehreen.rahman@optimizely.com)]\n   3. subject = \"New Task Created from Work Request in CMP\"\n   4. body =\n\n   ```\n        <p>Hi</p>\n   \n         <p>Here is the link to the newly created task:\n   \n            <a href=\\\"{cmp_task_url}\\\">{cmp_task_url}</a></p>\n   \n         <p>Thank you!</p>\n   ```\n\n6. After all steps succeed,\n\n   IF [[work_request_object]]​[\"supporting_activity\"] is not null, return this object\n\n   ```\n     {\n        \"execution_status\": \"Task created successfully\",\n        \"task_id\": task_id,\n        \"task_title\": [[work_request_object]]​[\"task_title\"],\n        \"campaign_id\": campaign_id,\n        \"cmp_task_url\": cmp_task_url,\n        \"supporting_activity\": [[work_request_object]]​[\"Supporting Activity\"],\n        \"work_request_id\": [[work_request_object]][\"work_request_id\"],\n        \"owner_email_address\": owner_email_address,\n        \"due_date\": [[work_request_object]][\"due_date\"]\n      }\n   ```\n\n   ELSE, return this object\n\n   ```\n      {\n        \"execution_status\": \"Task created successfully\",\n        \"task_id\": task_id,\n        \"campaign_id\": campaign_id,\n        \"cmp_task_url\": cmp_task_url\n      }\n   ```\n\n7. If any tool call fails, OR the returned task_id is null, OR any unexpected value occurs:\n\n   call `send_email` with :\n\n   1. recipient_emails = owner_email_address\n\n   2. cc_emails = [\"[Neil.Mullarkey@optimizely.com](mailto:Neil.Mullarkey@optimizely.com)\", \"[mehreen.rahman@optimizely.com](mailto:mehreen.rahman@optimizely.com)\", \"[Nicola.Dack@optimizely.com](mailto:Nicola.Dack@optimizely.com)\", \"[suriya.disha@optimizely.com](mailto:suriya.disha@optimizely.com)\"]\n\n   3. subject = \"Task creation failed in CMP\"\n\n   4. body =\n\n      ```\n      <p>Hi,</p>\n      <p>The task creation process failed during execution. Please check workflow logs in Agent Builder.</p>\"\n      ```\n\n   5. return {\"execution_status\": \"Failed\", \"reason\": \"Task creation failed during execution.\"}",
+  "internal_version": 21,
+  "is_enabled_in_chat": true
+}

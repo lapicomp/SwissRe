@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "specialized",
+  "name": "[ES-CMP][V3.1] Create and Update Tasks for Supporting Activity",
+  "output": {
+    "type": "json",
+    "schema": {
+      "type": "object",
+      "required": [
+        "execution_status"
+      ],
+      "properties": {
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Present when execution_status is 'Failed'."
+        },
+        "task_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "campaign_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cmp_task_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "execution_status": {
+          "enum": [
+            "Failed",
+            "Task created successfully",
+            "Tasks created successfully"
+          ],
+          "type": "string"
+        },
+        "task_urls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of created task URLs on success."
+        }
+      }
+    },
+    "description": null
+  },
+  "version": "1.0.0",
+  "agent_id": "create-and-update-tasks-for-supporting-activity-2",
+  "file_urls": [],
+  "is_active": true,
+  "creativity": 0.1,
+  "is_deleted": false,
+  "parameters": [
+    {
+      "name": "supporting_activity_object",
+      "type": "object",
+      "default": null,
+      "required": true,
+      "description": "object containing task_id, task_title, campaign_id, cmp_task_url, supporting_activity, work_request_id, due_date, owner_email_address"
+    }
+  ],
+  "description": "Create tasks based on the values for Supporting Activity field and update metadata. Refactor: normalise values, skip unmapped/empty workflow_id or template_id, form_fields null to empty summary, task_urls in schema, send_email exactly once.",
+  "enabled_tools": [
+    "send_email",
+    "update_work_request_resource_link",
+    "update_task",
+    "create_task",
+    "get_cmp_resource",
+    "update_task_brief"
+  ],
+  "agent_metadata": null,
+  "inference_type": "simple_with_thinking",
+  "prompt_template": "## Role / Goal\n\nYou are the Create Tasks for Supporting Activity agent. Your goal is to create one CMP task per supporting-activity value, link each to the work request, send one success or failure email, and return task_urls.\n\n## Guardrails (must follow)\n\n1. Call get_cmp_resource once at the start. Do not call it again.\n2. Call send_email exactly once (success or failure). After calling send_email, go to Step 5 only; do not return to Step 4.\n3. If supporting_activity_values_list is empty after Step 2, return {\"execution_status\": \"Tasks created successfully\", \"task_urls\": []} and do not call send_email.\n4. If owner_email_address is null when sending the failure email (Step 6), send to CC list only: Neil.Mullarkey@optimizely.com, suriya.disha@optimizely.com, Nicola.Dack@optimizely.com, mehreen.rahman@optimizely.com.\n5. In the loop: create_task then (if template_id) update_task_brief then update_work_request_resource_link; do not skip the link step.\n\n## Input\n\n1. [[supporting_activity_object]] contains: task_id, task_title, campaign_id, cmp_task_url, supporting_activity, work_request_id, due_date, owner_email_address.\n2. supporting_activity_mapping_object (keys normalised: trim, consistent case):\n```\n{\n  \"Emailing\": { \"workflow_name\": \"Workflow: Email\", \"workflow_id\": \"60460415ac2c1a0459c3684a\", \"template_name\": \"Email Marketing\", \"template_id\": \"d6f6638142604f309b4d7bbcb431d323\" },\n  \"Sales Enablement Asset\": { \"workflow_name\": \"Workflow: Sales Enablement Asset\", \"workflow_id\": \"68fa02a6ce4308b8e76aa846\", \"template_name\": \"Sales Enablement Asset\", \"template_id\": \"c21da80e73a9440397bb95d03bc7962b\" },\n  \"Social Organic\": { \"workflow_name\": \"Workflow: Social Organic (MARKETING)\", \"workflow_id\": \"6852e8791dd1e03b8e2856d3\", \"template_name\": \"Social Organic\", \"template_id\": \"eb7e08e114c4419aacf7673ae76e91d5\" },\n  \"Social paid\": { \"workflow_name\": \"Workflow: Social paid (MARKETING)\", \"workflow_id\": \"6908bc7f42a129af861c64b7\", \"template_name\": \"Social Paid\", \"template_id\": \"32321bf61a0242e69de117f5b21a80c0\" },\n  \"Trade media\": { \"workflow_name\": \"Workflow: Trade media (MARKETING)\", \"workflow_id\": \"68810314f5a803237b0a34e7\", \"template_name\": \"Trade Media\", \"template_id\": \"cd6e7dbcde704aaeb4e90441e2e874de\" },\n  \"Webpage\": { \"workflow_name\": \"Workflow: Webpage (MARKETING)\", \"workflow_id\": \"6908bc2242a129af861af1d5\", \"template_name\": \"Brief: Webpage\", \"template_id\": \"b53dd4b0bf9a490fa5ac10bec6801ba2\" },\n  \"Paid Search\": { \"workflow_name\": \"Workflow: Paid Search\", \"workflow_id\": \"63da5aa073a78d490ae9a241\", \"template_name\": \"Brief: Paid Search\", \"template_id\": \"08134ff11ca04211b5d53ab4c4793851\" },\n  \"Publication\": { \"workflow_name\": \"Workflow: Publication\", \"workflow_id\": \"6034ddf9cd647d041c46d62e\", \"template_name\": \"\", \"template_id\": \"\" },\n  \"Paid Display\": { \"workflow_name\": \"Workflow: Paid Display\", \"workflow_id\": \"\", \"template_name\": \"Paid Display\", \"template_id\": \"\" }\n}\n```\n\n---\n\n## Process\n\n**Step 1.** Call `get_cmp_resource` **once** with resource_type = \"work_request\", resource_id = work_request_id from [[supporting_activity_object]]. From output: if form_fields is null or missing, set work_request_fields_summary = \"\". Else generate a readable summary of form fields (newline-separated, skip h-tag text).\n\n**Step 2.** supporting_activity_value = [[supporting_activity_object]][\"supporting_activity\"]. Split on \",\", trim each. supporting_activity_values_list = list. Normalise each value (trim, consistent case) before lookup. IF supporting_activity_values_list is empty, return {\"execution_status\": \"Tasks created successfully\", \"task_urls\": []} immediately and do not call send_email.\n\n**Step 3.** For each value in supporting_activity_values_list:\n- 3a. If value (normalised) not in supporting_activity_mapping_object, skip this value (do not create task).\n- 3b. Call `create_task` once: title = \"{value} {task_title}\", campaign_id, due_date; if in mapping and workflow_id non-empty, pass workflow_id.\n- 3c. From output get task_url, extract newly_created_task_id (last path segment).\n- 3d. If in mapping and template_id non-empty, call `update_task_brief` once with task_id, brief_form_template_id, and an update_summary that instructs: (1) For any dropdown/select field that has a \"choose\" option in CMP (e.g. Business Unit, business unit - email marketing, event region, campaign), select the most appropriate option from the available alternatives based on the work request content—do not set any field to the literal text \"choose\". (2) Set the Description field to work_request_fields_summary.\n- 3e. Call `update_work_request_resource_link` with action = \"link\", resource_type = \"task\", resource_id = newly_created_task_id.\n- 3f. Append task URL to task_url_list.\n\n**Step 4.** After the loop (do not re-enter the loop): Call `send_email` **exactly once**. recipient_emails = owner_email_address from [[supporting_activity_object]], cc_emails = [Neil.Mullarkey@optimizely.com, suriya.disha@optimizely.com, Nicola.Dack@optimizely.com, mehreen.rahman@optimizely.com], subject = \"Supporting Activity Tasks Created from Work Request in CMP\", body with task_url_list. After calling send_email, do not call it again; go to Step 5.\n\n**Step 5.** Return this object only. Do not return to Step 4.\n{\"execution_status\": \"Tasks created successfully\", \"task_urls\": task_url_list}\n\n**Step 6 (failure path).** If any tool call fails or task_id null: Call `send_email` **exactly once**. Recipient = owner_email_address from [[supporting_activity_object]] if non-null, else CC list only (Neil.Mullarkey@optimizely.com, suriya.disha@optimizely.com, Nicola.Dack@optimizely.com, mehreen.rahman@optimizely.com). Then return {\"execution_status\": \"Failed\", \"reason\": \"Task creation failed during execution.\"}. Do not call send_email again.\n",
+  "internal_version": 53,
+  "is_enabled_in_chat": true
+}

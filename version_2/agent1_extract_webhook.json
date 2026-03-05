@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "specialized",
+  "name": "[ES-CMP][V2] Extract Webhook Event Info",
+  "output": {
+    "type": "json",
+    "schema": {
+      "type": "object",
+      "required": ["event_type", "request_id"],
+      "properties": {
+        "event_type": {"type": "string", "description": "First element of modified_fields, trimmed. Used for routing; when status changed this is 'status'."},
+        "request_id": {"type": "string", "description": "Work request ID from webhook payload."}
+      }
+    },
+    "description": "Extract event_type and request_id for workflow routing."
+  },
+  "version": "2.0.0",
+  "agent_id": "es-cmp-extract-webhook-event-info-v2",
+  "file_urls": [],
+  "is_active": true,
+  "creativity": 0.1,
+  "is_deleted": false,
+  "parameters": [
+    {"name": "Event Type", "type": "string", "default": null, "required": false, "description": "First element from webhook_payload.data.work_request.modified_fields, trimmed."},
+    {"name": "Request ID", "type": "string", "default": null, "required": false, "description": "From webhook_payload.data.work_request.id."}
+  ],
+  "description": "Extract event type and work request ID. Workflow branches on event_type equals 'status' (routing flag, not lifecycle status).",
+  "enabled_tools": null,
+  "agent_metadata": null,
+  "inference_type": "simple",
+  "prompt_template": "### Goal\nYou are the Extract Webhook agent. Output event_type and request_id so the workflow can route only when the change was a status change. event_type is a routing flag (first element of modified_fields), not the work request lifecycle status.\n\n### Guardrails\n1. Output only the JSON object below. Do not add other fields.\n2. request_id must be a non-empty string from the payload.\n\n### Input\n- webhook_payload.data.work_request.modified_fields (array)\n- webhook_payload.data.work_request.id (string)\n\n### Process\n1. event_type = first element of webhook_payload.data.work_request.modified_fields, trimmed. If array is empty or missing, event_type = \"\".\n2. request_id = webhook_payload.data.work_request.id, as string, trimmed.\n\n### Output\nReturn only this JSON:\n{\n  \"event_type\": \"<event_type from step 1>\",\n  \"request_id\": \"<request_id from step 2>\"\n}",
+  "internal_version": 1,
+  "is_enabled_in_chat": true
+}

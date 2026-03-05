@@ -1,0 +1,127 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "specialized",
+  "name": "[ES-CMP][V3] Process Work Request Details",
+  "output": {
+    "type": "json",
+    "schema": {
+      "type": "object",
+      "required": [
+        "proceed_status"
+      ],
+      "properties": {
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "channel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "campaign": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "due_date": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "task_title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "assignee_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "workflow_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "assignee_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "workflow_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "proceed_status": {
+          "enum": [
+            "Accepted",
+            "Not Accepted"
+          ],
+          "type": "string"
+        },
+        "work_request_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "supporting_activity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "description": ""
+  },
+  "version": "1.0.0",
+  "agent_id": "es-cmp-process-work-request-details-v-3",
+  "file_urls": [],
+  "is_active": true,
+  "creativity": 0.1,
+  "is_deleted": false,
+  "parameters": [
+    {
+      "name": "Event Type",
+      "type": "string",
+      "default": null,
+      "required": true,
+      "description": "get 'event_type' from the es-cmp-extract-webhook-event-info agent output object."
+    },
+    {
+      "name": "Request ID",
+      "type": "string",
+      "default": null,
+      "required": true,
+      "description": "get 'request_id' from the es-cmp-extract-webhook-event-info agent output object."
+    }
+  ],
+  "description": "process work request details in order to create task/s from it.",
+  "enabled_tools": [
+    "get_cmp_resource"
+  ],
+  "agent_metadata": null,
+  "inference_type": "simple_with_thinking",
+  "prompt_template": "## Input\n\n1. You will receive two variables:\n   1. [[Event Type]]​\n   2. [[Request ID]]​\n2. Define template_mapping:\n\n```\n{\n    \"Social Organic\": {\n    \"workflow_name\": \"Workflow: Social Organic (MARKETING)\",\n    \"workflow_id\": \"6852e8791dd1e03b8e2856d3\",\n    \"title_prefix_1\": \"Social Organic:\",\n    \"channel_field\": \"Social Media Account\",\n    \"channel_extraction_rule\": \"before_colon\"\n  },\n    \"Social Paid\": {\n    \"workflow_name\": \"Workflow: Social paid (MARKETING)\",\n    \"workflow_id\": \"6908bc7f42a129af861c64b7\",\n    \"title_prefix_1\": \"Social Paid:\",\n    \"channel_field\": \"Social Media Account\",\n    \"channel_extraction_rule\": \"before_colon\"\n  },\n    \"Web requests (MARKETING)\": {\n    \"workflow_name\": \"Workflow: Webpage (MARKETING)\",\n    \"workflow_id\": \"6908bc2242a129af861af1d5\",\n    \"title_prefix_1\": \"Webpage:\",\n    \"channel_field\": null,\n    \"channel_extraction_rule\": null\n  },\n    \"Event Request\": {\n    \"workflow_name\": \"Workflow: Event (BETA)\",\n    \"workflow_id\": \"67e40c557ef1a32071735a61\",\n    \"title_prefix_1\": \"Event:\",\n    \"channel_field\": null,\n    \"channel_extraction_rule\": null\n  },\n    \"Email Marketing\": {\n    \"workflow_name\": \"Workflow: Email\",\n    \"workflow_id\": \"60460415ac2c1a0459c3684a\",\n    \"title_prefix_1\": \"Email:\",\n    \"channel_field\": null,\n    \"channel_extraction_rule\": null\n  },\n    \"Event Info Capture\": {\n    \"workflow_name\": \"Workflow: Event (BETA)\",\n    \"workflow_id\": \"67e40c557ef1a32071735a61\",\n    \"title_prefix_1\": \"Event:\",\n    \"channel_field\": null,\n    \"channel_extraction_rule\": null\n  },\n    \"Graphic Design\": {\n    \"workflow_name\": \"Workflow: Graphic Design\",\n    \"workflow_id\": \"6908bd3042a129af861d7000\",\n    \"title_prefix_1\": \"Graphic:\",\n    \"channel_field\": null,\n    \"channel_extraction_rule\": null\n  },\n    \"Sales Enablement Asset\": {\n    \"workflow_name\": \"Workflow: Sales Enablement Asset\",\n    \"workflow_id\": \"68fa02a6ce4308b8e76aa846\",\n    \"title_prefix_1\": \"Sales Asset:\",\n    \"channel_field\": null,\n    \"channel_extraction_rule\": null\n  },\n    \"Trade Media\": {\n    \"workflow_name\": \"Workflow: Trade media (MARKETING)\",\n    \"workflow_id\": \"68810314f5a803237b0a34e7\",\n    \"title_prefix_1\": \"Trade Media:\",\n    \"channel_field\": \"Social Media Account\",\n    \"channel_extraction_rule\": \"before_colon\"\n  },\n    \"Video Production\": {\n    \"workflow_name\": \"Workflow: Video Production\",\n    \"workflow_id\": \"6908bd4d42a129af861d8a69\",\n    \"title_prefix_1\": \"Video:\",\n    \"channel_field\": null,\n    \"channel_extraction_rule\": null\n  }\n}\n```\n\n---\n\n## Process\n\n 1. call `get_cmp_resource` with :\n\n    1. resource_type = \"work_request\"\n    2. resource_id = [[Request ID]]\n    3. let wr = output\n\n 2. ​extract from wr :\n\n    1. template_name\n    2. title\n    3. work_request_status\n    4. assignee_name\n    5. assignee_id\n    6. form_fields\n\n 3. IF template_name not in template_mapping, return {\"proceed_status\" : \"Declined\"}\n\n 4. ELSE, from template_mapping[template_name], extract :\n\n    1. workflow_id\n    2. workflow_name\n    3. title_prefix_1\n    4. channel_field\n    5. channel_extraction_rule\n    6. IF channel_field is null, channel_value = null\n    7. ELSE raw_channel = form_fields[channel_field]\n       1. IF raw_channel is null, channel_value = null\n       2. ELSE\n          1. IF channel_extraction_rule == \"before_colon\":\n             1. Split raw_channel on \":\" and take the text before the first colon.\n             2. Trim spaces. Example: \"LinkedIn: Social Post\" → \"LinkedIn\"\n             3. let channel_value = this trimmed value\n          2. ELSE channel_value = raw_channel\n\n 5. IF channel_value is null, task_title = \"{title_prefix_1} {title}\"\n\n 6. ELSE, task_title = \"{title_prefix_1} {channel_value} {title}\"\n\n 7. IF work_request_status == \"Accepted\" and workflow_id is not null and template_name exists in template_mapping, \\\n    proceed_status = \"Accepted\"\n\n 8. ELSE, return {\"proceed_status\" : \"Declined\"}\n\n 9. let campaign_value = form_fields[\"Campaign\"]\n\n    1. IF not campaign_value, campaign_value = \"[ES-CMP] Test Opal Usecase - Campaign\"\n\n10. let due_date = form_fields[\"Deliverable Due Date\"]\n\n    1. IF not due_date, due_date = form_fields[\"Event End Date\"]\n       1. IF not due_date, due_date = form_fields[\"End Date\"]\n\n11. return output object below :\n\n    ```\n    {\n      \"proceed_status\": proceed_status,\n      \"work_request_id\": [[Request ID]]​,\n      \"template_name\": template_name,\n      \"workflow_id\": workflow_id,\n      \"workflow_name\": workflow_name,\n      \"status\": work_request_status,\n      \"assignee_name\": assignee_name,\n      \"assignee_id\": assignee_id,\n      \"campaign\": campaign_value,\n      \"supporting_activity\": form_fields[\"Supporting Activity\"],\n      \"due_date\": due_date,\n      \"channel\": channel_value,\n      \"task_title\": task_title\n    }\n    ```",
+  "internal_version": 13,
+  "is_enabled_in_chat": true
+}

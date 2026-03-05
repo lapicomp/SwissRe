@@ -1,0 +1,53 @@
+{
+    "schema_version": "1.0",
+    "agent_type": "specialized",
+    "name": "[ES-CMP] Extract Webhook Event Info",
+    "output": {
+      "type": "json",
+      "schema": {
+        "type": "object",
+        "required": [
+          "event_type",
+          "request_id"
+        ],
+        "properties": {
+          "event_type": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "generate a response"
+    },
+    "version": "1.0.0",
+    "agent_id": "es-cmp-extract-webhook-event-info",
+    "file_urls": [],
+    "is_active": true,
+    "creativity": 0.1,
+    "is_deleted": false,
+    "parameters": [
+      {
+        "name": "Event Type",
+        "type": "string",
+        "default": null,
+        "required": false,
+        "description": "Extract the first element from webhook_payload.data.work_request.modified_fields data from the webhook payload"
+      },
+      {
+        "name": "Request ID",
+        "type": "string",
+        "default": null,
+        "required": false,
+        "description": "Extract webhook_payload.data. work_request.id data from the webhook payload"
+      }
+    ],
+    "description": "Extract event type and work request ID from the webhook event.",
+    "enabled_tools": null,
+    "agent_metadata": null,
+    "inference_type": "simple",
+    "prompt_template": "Extract the&nbsp;[[Event Type]]​&nbsp;and [[Request ID]]​ from the cmp_work_request_modified webhook payload.\n\nReturn the object like below:\n\n{\n\n  \"event_type\":&nbsp;[[Event Type]]​,\n\n  \"request_id\":&nbsp;[[Request ID]]​&nbsp;\n\n}",
+    "internal_version": 9,
+    "is_enabled_in_chat": true
+  }

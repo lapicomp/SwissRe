@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "workflow",
+  "name": "[ES-CMP][R2] Create Tasks from Specific Work Requests",
+  "description": "Stable R2: create task/s from specific work requests when status is Accepted. Consistent agent IDs, case-insensitive campaign lookup, equals-only routing.",
+  "version": "",
+  "agent_id": "create-tsk-from-wrq-r2",
+  "objective": "",
+  "plan": "",
+  "is_active": true,
+  "is_deleted": false,
+  "agent_metadata": {
+    "edges": [
+      { "id": "e1000001-6d4e-4f01-9a22-000000000001", "source": "d0a1b2c3-98a8-4665-9d95-7ca1223b2354", "target": "a1111111-6d4e-4f01-9a22-111111111111", "sourceHandle": "source-right-circle", "targetHandle": "target-body" },
+      { "id": "e1000002-6d4e-4f01-9a22-000000000002", "source": "a1111111-6d4e-4f01-9a22-111111111111", "target": "a1111111-6d4e-4f01-9a22-111111111111-condition-ex", "sourceHandle": "source-right", "targetHandle": "target-body" },
+      { "id": "e1000003-6d4e-4f01-9a22-000000000003", "source": "a1111111-6d4e-4f01-9a22-111111111111-condition-ex", "target": "b2222222-6d4e-4f01-9a22-222222222222", "sourceHandle": "source-right", "targetHandle": "target-body" },
+      { "id": "e1000004-6d4e-4f01-9a22-000000000004", "source": "b2222222-6d4e-4f01-9a22-222222222222", "target": "b2222222-6d4e-4f01-9a22-222222222222-condition-pw", "sourceHandle": "source-right", "targetHandle": "target-body" },
+      { "id": "e1000005-6d4e-4f01-9a22-000000000005", "source": "b2222222-6d4e-4f01-9a22-222222222222-condition-pw", "target": "c3333333-6d4e-4f01-9a22-333333333333", "sourceHandle": "source-right", "targetHandle": "target-body" },
+      { "id": "e1000006-6d4e-4f01-9a22-000000000006", "source": "c3333333-6d4e-4f01-9a22-333333333333", "target": "c3333333-6d4e-4f01-9a22-333333333333-condition-ct", "sourceHandle": "source-right", "targetHandle": "target-body" },
+      { "id": "e1000007-6d4e-4f01-9a22-000000000007", "source": "c3333333-6d4e-4f01-9a22-333333333333-condition-ct", "target": "d4444444-6d4e-4f01-9a22-444444444444", "sourceHandle": "source-right", "targetHandle": "target-body" }
+    ],
+    "nodes": [
+      { "id": "d0a1b2c3-98a8-4665-9d95-7ca1223b2354", "measured": { "width": 248, "height": 108 }, "position": { "x": 30, "y": -165 } },
+      { "id": "a1111111-6d4e-4f01-9a22-111111111111", "measured": { "width": 248, "height": 108 }, "position": { "x": 330, "y": -30 } },
+      { "id": "a1111111-6d4e-4f01-9a22-111111111111-condition-ex", "measured": { "width": 248, "height": 92 }, "position": { "x": 645, "y": -180 } },
+      { "id": "b2222222-6d4e-4f01-9a22-222222222222", "measured": { "width": 248, "height": 108 }, "position": { "x": 960, "y": -30 } },
+      { "id": "b2222222-6d4e-4f01-9a22-222222222222-condition-pw", "measured": { "width": 248, "height": 92 }, "position": { "x": 1275, "y": -180 } },
+      { "id": "c3333333-6d4e-4f01-9a22-333333333333", "measured": { "width": 248, "height": 108 }, "position": { "x": 1575, "y": -30 } },
+      { "id": "c3333333-6d4e-4f01-9a22-333333333333-condition-ct", "measured": { "width": 248, "height": 92 }, "position": { "x": 1935, "y": -210 } },
+      { "id": "d4444444-6d4e-4f01-9a22-444444444444", "measured": { "width": 248, "height": 108 }, "position": { "x": 2235, "y": -60 } }
+    ]
+  },
+  "internal_version": 1,
+  "steps": [
+    {
+      "step_id": "d4444444-6d4e-4f01-9a22-444444444444",
+      "step_type": "specialized",
+      "name": "[ES-CMP][R2] Create and Update Tasks for Supporting Activity",
+      "description": "Create tasks based on Supporting Activity field values and update metadata.",
+      "agent_id": "es-cmp-r2-supporting-activity",
+      "parameters_schema": {},
+      "next_step_id": null,
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "c3333333-6d4e-4f01-9a22-333333333333",
+      "step_type": "conditional",
+      "name": "[ES-CMP][R2] Create and Update Task from Work Request",
+      "description": "Create main task from work request; branch on has_supporting_activity.",
+      "evaluator_agent_id": "es-cmp-r2-create-task",
+      "parameters_schema": null,
+      "conditions": [
+        { "matching_condition": "true", "match_type": "equals", "target_step_id": "d4444444-6d4e-4f01-9a22-444444444444", "priority": 0 }
+      ],
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "a1111111-6d4e-4f01-9a22-111111111111",
+      "step_type": "conditional",
+      "name": "[ES-CMP][R2] Extract Webhook Event Info",
+      "description": "Extract event_type and request_id from webhook.",
+      "evaluator_agent_id": "es-cmp-r2-extract-webhook",
+      "parameters_schema": null,
+      "conditions": [
+        { "matching_condition": "status", "match_type": "equals", "target_step_id": "b2222222-6d4e-4f01-9a22-222222222222", "priority": 0 }
+      ],
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "b2222222-6d4e-4f01-9a22-222222222222",
+      "step_type": "conditional",
+      "name": "[ES-CMP][R2] Process Work Request Details",
+      "description": "Process work request; return proceed_status. Route to Create Task only when proceed_status equals Accepted (field).",
+      "evaluator_agent_id": "es-cmp-r2-process-wr",
+      "parameters_schema": null,
+      "conditions": [
+        { "matching_condition": "Accepted", "match_type": "equals", "target_step_id": "c3333333-6d4e-4f01-9a22-333333333333", "priority": 0 }
+      ],
+      "timeout_seconds": 3600
+    }
+  ],
+  "specialized_agents_required": [
+    "es-cmp-r2-extract-webhook",
+    "es-cmp-r2-process-wr",
+    "es-cmp-r2-create-task",
+    "es-cmp-r2-supporting-activity"
+  ],
+  "triggers": [
+    {
+      "trigger_id": "d0a1b2c3-98a8-4665-9d95-7ca1223b2354",
+      "trigger_type": "webhook",
+      "name": "cmp_work_request_modified_event_r2",
+      "description": "Trigger via webhook on work_request_modified.",
+      "is_active": true,
+      "auth_key": "Csm2vDE6rc",
+      "auth_header_name": "callback-secret",
+      "auth_header_format": "{token}",
+      "payload_content_type": "application/json",
+      "payload_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Webhook Payload Schema",
+        "type": "object",
+        "properties": {
+          "event_name": { "type": "string" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "work_request": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "string" },
+                  "modified_fields": { "type": "array", "items": { "type": "string" } },
+                  "identifiers_of_modified_form_fields": { "type": "array", "items": { "type": "string" } },
+                  "links": {
+                    "type": "object",
+                    "properties": {
+                      "self": { "type": "string", "format": "uri" },
+                      "comments": { "type": "string", "format": "uri" },
+                      "campaigns": { "type": "string", "format": "uri" },
+                      "attachments": { "type": "string", "format": "uri" },
+                      "creative_assets": { "type": "string", "format": "uri" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

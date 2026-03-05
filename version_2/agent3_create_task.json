@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "specialized",
+  "name": "[ES-CMP][V2] Create and Update Task from Work Request",
+  "output": {
+    "type": "json",
+    "schema": {
+      "type": "object",
+      "required": ["execution_status"],
+      "properties": {
+        "execution_status": {"enum": ["Failed", "Task created successfully"], "type": "string"},
+        "reason": {"type": ["string", "null"]},
+        "task_id": {"type": ["string", "null"]},
+        "due_date": {"type": ["string", "null"]},
+        "campaign_id": {"type": ["string", "null"]},
+        "cmp_task_url": {"type": ["string", "null"]},
+        "supporting_activity": {"type": ["string", "null"]},
+        "has_supporting_activity": {"type": "boolean", "description": "True when supporting_activity is non-null and non-empty; used for workflow routing."},
+        "task_title": {"type": ["string", "null"]},
+        "work_request_id": {"type": ["string", "null"]},
+        "owner_email_address": {"type": ["string", "null"]}
+      }
+    },
+    "description": "Task creation result; has_supporting_activity drives optional Supporting Activity step."
+  },
+  "version": "2.0.0",
+  "agent_id": "create-and-update-task-from-work-request-v2",
+  "file_urls": [],
+  "is_active": true,
+  "creativity": 0.1,
+  "is_deleted": false,
+  "parameters": [
+    {"name": "work_request_object", "type": "object", "default": null, "required": true, "description": "Object with proceed_status, work_request_id, template_name, workflow_id, workflow_name, status, assignee_name, assignee_id, campaign, supporting_activity, due_date, channel, task_title."}
+  ],
+  "description": "Create task from work request; case-insensitive campaign lookup; send_email exactly once per path.",
+  "enabled_tools": ["update_task", "update_task_substep", "get_cmp_resource", "create_task_from_work_request", "send_email"],
+  "agent_metadata": null,
+  "inference_type": "simple",
+  "prompt_template": "### Goal\nCreate a task from the work request using CMP tools. Set task owner from assignee. Call send_email exactly once (success or failure) then return; do not call send_email again or re-enter earlier steps.\n\n### Guardrails\n1. Campaign lookup: case-insensitive. Find key K in campaign_mapping_object such that K.trim().toLowerCase() === campaign_name.trim().toLowerCase(); use campaign_id = campaign_mapping_object[K]. If no match or campaign_name null/empty, do NOT call create_task_from_work_request; send failure email to CC list only, return Failed with reason.\n2. Call create_task_from_work_request, get_cmp_resource, update_task_substep, send_email each at most once per path. After send_email, return immediately.\n3. If task_id is null after create, or owner_email_address is null after get_cmp_resource, take failure path: send_email once (to CC only if owner unknown), return Failed. Do not call further tools with null.\n4. Pass supporting_activity to next step using the key \"supporting_activity\" (same as input). Set has_supporting_activity true only when supporting_activity is non-null and non-empty after trim.\n\n### Input\n[[work_request_object]] with: proceed_status, work_request_id, template_name, workflow_id, workflow_name, status, assignee_name, assignee_id, campaign, supporting_activity, due_date, channel, task_title.\n\n### Campaign mapping\n{\"[ES CMP] Test Campaign\": \"69228e01dc2727478b5f93ea\", \"[ES-CMP] Test Opal Usecase - Campaign\": \"6903266dd19827a999a72490\", \"Event: Test Campaign\": \"68f243baac75a43a53dfb70a\", \"Captives & Fronting (2025)\": \"6967c4318dbb9dc09d43b966\", \"Event: Baden Baden (2025)\": \"6967c3b18dbb9dc09d4342a6\", \"Event: RVS Monte Carlo (2025)\": \"692d9822465fe318491a02ef\", \"Financial & Structured Solutions (2025)\": \"6967c3ce8dbb9dc09d438c29\", \"Forward in Life (2025)\": \"692d9845465fe318491a1a0c\", \"IP/PULSE & Network (2025)\": \"692d985c465fe318491a612c\", \"RDS Platform Overall (2025)\": \"6967c3ee8dbb9dc09d43a0fd\", \"RDS Property Exposure (2025)\": \"6967c4068dbb9dc09d43a95f\", \"Reinsurance Recalibrated (2025)\": \"692d9831465fe318491a062a\"}\n\n### Process\n1. Campaign: campaign_name = trim([[work_request_object]][\"campaign\"]). If campaign_name null/empty, send_email once (CC only: Neil.Mullarkey@optimizely.com, suriya.disha@optimizely.com, Nicola.Dack@optimizely.com, mehreen.rahman@optimizely.com), subject \"Task creation failed in CMP\", body \"Campaign not in mapping.\"; return {\"execution_status\": \"Failed\", \"reason\": \"Campaign not in campaign_mapping_object\"}. Else find K in campaign_mapping_object with K.trim().toLowerCase() === campaign_name.trim().toLowerCase(); if not found, same failure email and return. Else campaign_id = campaign_mapping_object[K].\n2. Call create_task_from_work_request(work_request_id, title=task_title, campaign_id, due_at=due_date, owner_id=assignee_id, workflow_id). Let task_id = result. If task_id null, send_email once (CC only), return {\"execution_status\": \"Failed\", \"reason\": \"Task creation returned null task_id\"}.\n3. Call get_cmp_resource(resource_type=\"task\", resource_id=task_id). Extract first_workflow_step_name, cmp_task_url, owner_email_address. If owner_email_address null, send_email once (CC only), return {\"execution_status\": \"Failed\", \"reason\": \"owner_email_address null\"}.\n4. Call update_task_substep(task_id, step_name=first_workflow_step_name, assignee_type=\"user\", assignee_name=[[work_request_object]][\"assignee_name\"]).\n5. Call send_email once: recipient_emails=owner_email_address, cc_emails=[Neil.Mullarkey@optimizely.com, suriya.disha@optimizely.com, Nicola.Dack@optimizely.com, mehreen.rahman@optimizely.com], subject=\"New Task Created from Work Request in CMP\", body with cmp_task_url link. Then do not call send_email again.\n6. Return. If [[work_request_object]][\"supporting_activity\"] is non-null and non-empty (after trim): {\"execution_status\": \"Task created successfully\", \"task_id\", \"task_title\", \"campaign_id\", \"cmp_task_url\", \"supporting_activity\": [[work_request_object]][\"supporting_activity\"], \"work_request_id\", \"owner_email_address\", \"due_date\", \"has_supporting_activity\": true}. Else: {\"execution_status\": \"Task created successfully\", \"task_id\", \"campaign_id\", \"cmp_task_url\", \"has_supporting_activity\": false}.\n7. Failure path: If any tool call fails or unexpected value, call send_email exactly once (recipient=owner_email_address if available else CC only), subject \"Task creation failed in CMP\", body failure message; then return {\"execution_status\": \"Failed\", \"reason\": \"Task creation failed during execution.\"}.",
+  "internal_version": 1,
+  "is_enabled_in_chat": true
+}

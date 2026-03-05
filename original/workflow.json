@@ -1,0 +1,228 @@
+{
+    "schema_version": "1.0",
+    "agent_type": "workflow",
+    "name": "[ES-CMP][V3] Create Tasks from Specific Work Requests",
+    "description": "POC to create task/s from specific work requests",
+    "version": "",
+    "agent_id": "create-tsk-from-wrq-v-3",
+    "objective": "",
+    "plan": "",
+    "is_active": true,
+    "is_deleted": false,
+    "agent_metadata": {
+      "edges": [
+        {
+          "id": "341030b6-9412-4759-a466-a6dee80b93c8",
+          "source": "493f8952-f230-4e2f-994f-544ea515e73f",
+          "target": "493f8952-f230-4e2f-994f-544ea515e73f-condition-t4zeww"
+        },
+        {
+          "id": "xy-edge__493f8952-f230-4e2f-994f-544ea515e73f-condition-t4zewwsource-right-e3fdfda3-fdae-451d-9903-7bfe5e495754target-body",
+          "source": "493f8952-f230-4e2f-994f-544ea515e73f-condition-t4zeww",
+          "target": "e3fdfda3-fdae-451d-9903-7bfe5e495754",
+          "sourceHandle": "source-right",
+          "targetHandle": "target-body"
+        },
+        {
+          "id": "1b70c99f-55da-4fb5-b6fd-476dfae36f16",
+          "source": "3731724b-6c9d-4af3-93cb-99c0666e7261",
+          "target": "3731724b-6c9d-4af3-93cb-99c0666e7261-condition-tpxxnx"
+        },
+        {
+          "id": "a53b0a98-bddf-49da-bbab-cffd772e6b64",
+          "source": "3731724b-6c9d-4af3-93cb-99c0666e7261-condition-tpxxnx",
+          "target": "c9e03ded-7a23-4cba-a39d-ffb8a294982f"
+        },
+        {
+          "id": "c40a67b5-4d56-45cf-ae04-e5d86e0c3e80",
+          "source": "c9e03ded-7a23-4cba-a39d-ffb8a294982f",
+          "target": "c9e03ded-7a23-4cba-a39d-ffb8a294982f-condition-lw3m4i"
+        },
+        {
+          "id": "e7b46362-e68d-4bc2-ba35-8aaaf0cc8c1d",
+          "source": "c9e03ded-7a23-4cba-a39d-ffb8a294982f-condition-lw3m4i",
+          "target": "493f8952-f230-4e2f-994f-544ea515e73f"
+        },
+        {
+          "id": "xy-edge__414174dc-3cae-4208-ab8c-c304e9dd0388source-right-circle-f8c10616-dde0-4ca9-8808-8b12c60b6009target-body",
+          "source": "414174dc-3cae-4208-ab8c-c304e9dd0388",
+          "target": "3731724b-6c9d-4af3-93cb-99c0666e7261",
+          "sourceHandle": "source-right-circle",
+          "targetHandle": "target-body"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "414174dc-3cae-4208-ab8c-c304e9dd0388",
+          "measured": {
+            "width": 248,
+            "height": 108
+          },
+          "position": {
+            "x": 30,
+            "y": -165
+          }
+        },
+        {
+          "id": "493f8952-f230-4e2f-994f-544ea515e73f",
+          "measured": {
+            "width": 248,
+            "height": 108
+          },
+          "position": {
+            "x": 1575,
+            "y": -30
+          }
+        },
+        {
+          "id": "493f8952-f230-4e2f-994f-544ea515e73f-condition-t4zeww",
+          "measured": {
+            "width": 248,
+            "height": 92
+          },
+          "position": {
+            "x": 1935,
+            "y": -210
+          }
+        },
+        {
+          "id": "3731724b-6c9d-4af3-93cb-99c0666e7261",
+          "measured": {
+            "width": 248,
+            "height": 108
+          },
+          "position": {
+            "x": 330,
+            "y": -30
+          }
+        },
+        {
+          "id": "3731724b-6c9d-4af3-93cb-99c0666e7261-condition-tpxxnx",
+          "measured": {
+            "width": 248,
+            "height": 92
+          },
+          "position": {
+            "x": 645,
+            "y": -180
+          }
+        },
+        {
+          "id": "c9e03ded-7a23-4cba-a39d-ffb8a294982f",
+          "measured": {
+            "width": 248,
+            "height": 108
+          },
+          "position": {
+            "x": 960,
+            "y": -30
+          }
+        },
+        {
+          "id": "c9e03ded-7a23-4cba-a39d-ffb8a294982f-condition-lw3m4i",
+          "measured": {
+            "width": 248,
+            "height": 92
+          },
+          "position": {
+            "x": 1275,
+            "y": -180
+          }
+        },
+        {
+          "id": "e3fdfda3-fdae-451d-9903-7bfe5e495754",
+          "measured": {
+            "width": 248,
+            "height": 108
+          },
+          "position": {
+            "x": 2235,
+            "y": -60
+          }
+        }
+      ]
+    },
+    "internal_version": 40,
+    "steps": [
+      {
+        "step_id": "e3fdfda3-fdae-451d-9903-7bfe5e495754",
+        "step_type": "specialized",
+        "name": "[ES-CMP][V3.1] Create and Update Tasks for Supporting Activity",
+        "description": "create tasks based on the values for Supporting Activity field and update metadata of the tasks accordingly",
+        "agent_id": "create-and-update-tasks-for-supporting-activity-2",
+        "parameters_schema": {},
+        "next_step_id": null,
+        "timeout_seconds": 3600
+      },
+      {
+        "step_id": "493f8952-f230-4e2f-994f-544ea515e73f",
+        "step_type": "conditional",
+        "name": "[ES-CMP][V3] Create and Update Task from Work Request",
+        "description": "create task from work request based on extracted work request metadata and update task metadata",
+        "evaluator_agent_id": "create-and-update-task-from-work-request-v-3",
+        "parameters_schema": null,
+        "conditions": [
+          {
+            "matching_condition": "supporting_activity",
+            "match_type": "contains",
+            "target_step_id": "e3fdfda3-fdae-451d-9903-7bfe5e495754",
+            "priority": 0
+          }
+        ],
+        "timeout_seconds": 3600
+      },
+      {
+        "step_id": "3731724b-6c9d-4af3-93cb-99c0666e7261",
+        "step_type": "conditional",
+        "name": "[ES-CMP] Extract Webhook Event Info",
+        "description": "Extract event type and work request ID from the webhook event.",
+        "evaluator_agent_id": "es-cmp-extract-webhook-event-info",
+        "parameters_schema": null,
+        "conditions": [
+          {
+            "matching_condition": "status",
+            "match_type": "contains",
+            "target_step_id": "c9e03ded-7a23-4cba-a39d-ffb8a294982f",
+            "priority": 0
+          }
+        ],
+        "timeout_seconds": 3600
+      },
+      {
+        "step_id": "c9e03ded-7a23-4cba-a39d-ffb8a294982f",
+        "step_type": "conditional",
+        "name": "[ES-CMP][V3] Process Work Request Details",
+        "description": "process work request details in order to create task/s from it.",
+        "evaluator_agent_id": "es-cmp-process-work-request-details-v-3",
+        "parameters_schema": null,
+        "conditions": [
+          {
+            "matching_condition": "Accepted",
+            "match_type": "contains",
+            "target_step_id": "493f8952-f230-4e2f-994f-544ea515e73f",
+            "priority": 0
+          }
+        ],
+        "timeout_seconds": 3600
+      }
+    ],
+    "specialized_agents_required": [
+      "create-and-update-task-from-work-request-v-3",
+      "create-and-update-tasks-for-supporting-activity-2",
+      "es-cmp-process-work-request-details-v-3",
+      "es-cmp-extract-webhook-event-info"
+    ],
+    "triggers": [
+      {
+        "trigger_id": "414174dc-3cae-4208-ab8c-c304e9dd0388",
+        "trigger_type": "webhook",
+        "name": "cmp_work_request_modified_event_v3",
+        "description": "Trigger via webhook",
+        "is_active": true,
+        "auth_key": "Csm2vDE6rc",
+        "auth_header_name": "callback-secret",
+        "auth_header_format": "{token}",
+        "payload_content_type": "application/json"
+      }
+    ]
+  }
