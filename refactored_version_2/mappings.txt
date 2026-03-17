@@ -1,0 +1,73 @@
+ES-CMP V5 MAPPINGS REFERENCE
+==============================
+
+All keys are normalised (trimmed, title-cased). Apply the same normalisation before lookup.
+Campaign and activity lookups are case-insensitive (compare lowercased, trimmed values).
+
+==============================================
+SECTION 1 — WORK REQUEST TEMPLATE MAPPING
+==============================================
+Used by: Agent 1 (Process WR)
+Purpose: Maps CMP work request template name to workflow and task title prefix.
+
+Key                       | workflow_id               | title_prefix       | channel_field        | channel_extraction_rule
+Social Organic            | 6852e8791dd1e03b8e2856d3  | Social Organic:    | Social Media Account | before_colon
+Social Paid               | 6908bc7f42a129af861c64b7  | Social Paid:       | Social Media Account | before_colon
+Web Requests (Marketing)  | 6908bc2242a129af861af1d5  | Webpage:           | (none)               | (none)
+Event Request             | 67e40c557ef1a32071735a61  | Event:             | (none)               | (none)
+Email Marketing           | 60460415ac2c1a0459c3684a  | Email:             | (none)               | (none)
+Event Info Capture        | 67e40c557ef1a32071735a61  | Event:             | (none)               | (none)
+Graphic Design            | 6908bd3042a129af861d7000  | Graphic:           | (none)               | (none)
+Sales Enablement Asset    | 68fa02a6ce4308b8e76aa846  | Sales Asset:       | (none)               | (none)
+Trade Media               | 68810314f5a803237b0a34e7  | Trade Media:       | Social Media Account | before_colon
+Video Production          | 6908bd4d42a129af861d8a69  | Video:             | (none)               | (none)
+
+channel_extraction_rule: before_colon = split the field value on ":", take text before first colon and trim.
+
+==============================================
+SECTION 2 — CAMPAIGN MAPPING
+==============================================
+Used by: Agent 2 (Create Task)
+Purpose: Maps CMP campaign name to campaign ID.
+Lookup is case-insensitive. Use the _fallback entry when no match is found.
+
+Campaign Name                          | Campaign ID
+[ES CMP] Test Campaign                 | 69228e01dc2727478b5f93ea
+[ES-CMP] Test Opal Usecase - Campaign  | 6903266dd19827a999a72490
+Event: Test Campaign                   | 68f243baac75a43a53dfb70a
+Captives & Fronting (2025)             | 6967c4318dbb9dc09d43b966
+Event: Baden Baden (2025)              | 6967c3b18dbb9dc09d4342a6
+Event: RVS Monte Carlo (2025)          | 692d9822465fe318491a02ef
+Financial & Structured Solutions (2025)| 6967c3ce8dbb9dc09d438c29
+Forward in Life (2025)                 | 692d9845465fe318491a1a0c
+IP/PULSE & Network (2025)              | 692d985c465fe318491a612c
+RDS Platform Overall (2025)            | 6967c3ee8dbb9dc09d43a0fd
+RDS Property Exposure (2025)           | 6967c4068dbb9dc09d43a95f
+Reinsurance Recalibrated (2025)        | 692d9831465fe318491a062a
+_fallback                              | 6903266dd19827a999a72490
+
+
+==============================================
+SECTION 3 — SUPPORTING ACTIVITY MAPPING
+==============================================
+Used by: Agent 3 (Supporting Activity)
+Purpose: Maps supporting activity type to workflow ID and brief template ID.
+Lookup is case-insensitive. If a type is not found, skip it.
+
+Activity Type          | workflow_id               | template_id
+Emailing               | 60460415ac2c1a0459c3684a  | d6f6638142604f309b4d7bbcb431d323
+Sales Enablement Asset | 68fa02a6ce4308b8e76aa846  | c21da80e73a9440397bb95d03bc7962b
+Social Organic         | 6852e8791dd1e03b8e2856d3  | eb7e08e114c4419aacf7673ae76e91d5
+Social Paid            | 6908bc7f42a129af861c64b7  | 32321bf61a0242e69de117f5b21a80c0
+Trade Media            | 68810314f5a803237b0a34e7  | cd6e7dbcde704aaeb4e90441e2e874de
+Webpage                | 6908bc2242a129af861af1d5  | b53dd4b0bf9a490fa5ac10bec6801ba2
+Paid Search            | 63da5aa073a78d490ae9a241  | 08134ff11ca04211b5d53ab4c4793851
+Publication            | 6034ddf9cd647d041c46d62e  | (none)
+Paid Display           | (none)                    | (none)
+
+If workflow_id is (none) or empty: create the task without a workflow_id.
+If template_id is (none) or empty: skip the update_task_brief step for this task.
+
+
+
+

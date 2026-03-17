@@ -1,0 +1,127 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "workflow",
+  "name": "[ES-CMP][V4] Create Tasks from Specific Work Requests",
+  "description": "V4: 3-agent flow. The modified_fields and status checks are workflow_gate logic inside the combined Process WR agent. Trigger → Process WR → Create Task → [optional] Supporting Activity.",
+  "version": "",
+  "agent_id": "create-tsk-from-wrq-v4",
+  "objective": "",
+  "plan": "",
+  "is_active": true,
+  "is_deleted": false,
+  "agent_metadata": {
+    "edges": [
+      { "id": "e3000001-6d4e-4f01-9a22-000000000001", "source": "d0a1b2c3-98a8-4665-9d95-7ca1223b2354", "target": "b2222222-6d4e-4f01-9a22-222222222222", "sourceHandle": "source-right-circle", "targetHandle": "target-body" },
+      { "id": "e3000002-6d4e-4f01-9a22-000000000002", "source": "b2222222-6d4e-4f01-9a22-222222222222", "target": "b2222222-6d4e-4f01-9a22-222222222222-condition-pw", "sourceHandle": "source-right", "targetHandle": "target-body" },
+      { "id": "e3000003-6d4e-4f01-9a22-000000000003", "source": "b2222222-6d4e-4f01-9a22-222222222222-condition-pw", "target": "c3333333-6d4e-4f01-9a22-333333333333", "sourceHandle": "source-right", "targetHandle": "target-body" },
+      { "id": "e3000004-6d4e-4f01-9a22-000000000004", "source": "c3333333-6d4e-4f01-9a22-333333333333", "target": "c3333333-6d4e-4f01-9a22-333333333333-condition-ct", "sourceHandle": "source-right", "targetHandle": "target-body" },
+      { "id": "e3000005-6d4e-4f01-9a22-000000000005", "source": "c3333333-6d4e-4f01-9a22-333333333333-condition-ct", "target": "d4444444-6d4e-4f01-9a22-444444444444", "sourceHandle": "source-right", "targetHandle": "target-body" }
+    ],
+    "nodes": [
+      { "id": "d0a1b2c3-98a8-4665-9d95-7ca1223b2354", "measured": { "width": 248, "height": 108 }, "position": { "x": 30, "y": -165 } },
+      { "id": "b2222222-6d4e-4f01-9a22-222222222222", "measured": { "width": 248, "height": 108 }, "position": { "x": 330, "y": -30 } },
+      { "id": "b2222222-6d4e-4f01-9a22-222222222222-condition-pw", "measured": { "width": 248, "height": 92 }, "position": { "x": 645, "y": -180 } },
+      { "id": "c3333333-6d4e-4f01-9a22-333333333333", "measured": { "width": 248, "height": 108 }, "position": { "x": 960, "y": -30 } },
+      { "id": "c3333333-6d4e-4f01-9a22-333333333333-condition-ct", "measured": { "width": 248, "height": 92 }, "position": { "x": 1275, "y": -180 } },
+      { "id": "d4444444-6d4e-4f01-9a22-444444444444", "measured": { "width": 248, "height": 108 }, "position": { "x": 1575, "y": -30 } }
+    ]
+  },
+  "internal_version": 1,
+  "steps": [
+    {
+      "step_id": "d4444444-6d4e-4f01-9a22-444444444444",
+      "step_type": "specialized",
+      "name": "[ES-CMP][V4] Create and Update Tasks for Supporting Activity",
+      "description": "Create tasks based on Supporting Activity field values and update metadata.",
+      "agent_id": "es-cmp-v4-supporting-activity",
+      "parameters_schema": {},
+      "next_step_id": null,
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "c3333333-6d4e-4f01-9a22-333333333333",
+      "step_type": "conditional",
+      "name": "[ES-CMP][V4] Create and Update Task from Work Request",
+      "description": "Create main task from work request; branch on has_supporting_activity.",
+      "evaluator_agent_id": "es-cmp-v4-create-task",
+      "parameters_schema": null,
+      "conditions": [
+        { "matching_condition": "true", "match_type": "equals", "target_step_id": "d4444444-6d4e-4f01-9a22-444444444444", "priority": 0 }
+      ],
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "b2222222-6d4e-4f01-9a22-222222222222",
+      "step_type": "conditional",
+      "name": "[ES-CMP][V4] Process Work Request Details",
+      "description": "Receives webhook_payload directly. Checks modified_fields for 'status' (early return if absent). Extracts request_id. Fetches and validates work request. Returns proceed_status=Accepted only when all gates pass.",
+      "evaluator_agent_id": "es-cmp-v4-process-wr",
+      "parameters_schema": {
+        "webhook_payload": "{{webhook_payload}}"
+      },
+      "conditions": [
+        { "matching_condition": "Accepted", "match_type": "equals", "target_step_id": "c3333333-6d4e-4f01-9a22-333333333333", "priority": 0 }
+      ],
+      "timeout_seconds": 3600
+    }
+  ],
+  "specialized_agents_required": [
+    "es-cmp-v4-process-wr",
+    "es-cmp-v4-create-task",
+    "es-cmp-v4-supporting-activity"
+  ],
+  "triggers": [
+    {
+      "trigger_id": "d0a1b2c3-98a8-4665-9d95-7ca1223b2354",
+      "trigger_type": "webhook",
+      "name": "cmp_work_request_modified_event_v4",
+      "description": "Trigger via webhook on work_request_modified.",
+      "is_active": true,
+      "auth_key": "Csm2vDE6rc",
+      "auth_header_name": "callback-secret",
+      "auth_header_format": "{token}",
+      "payload_content_type": "application/json",
+      "payload_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Opal Trigger Input Schema",
+        "type": "object",
+        "properties": {
+          "trigger_id": { "type": "string" },
+          "received_at": { "type": "string" },
+          "trigger_name": { "type": "string" },
+          "webhook_headers": { "type": "object" },
+          "webhook_payload": {
+            "type": "object",
+            "description": "The raw CMP webhook body.",
+            "properties": {
+              "event_name": { "type": "string" },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "work_request": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "modified_fields": { "type": "array", "items": { "type": "string" } },
+                      "identifiers_of_modified_form_fields": { "type": "array", "items": { "type": "string" } },
+                      "links": {
+                        "type": "object",
+                        "properties": {
+                          "self": { "type": "string", "format": "uri" },
+                          "comments": { "type": "string", "format": "uri" },
+                          "campaigns": { "type": "string", "format": "uri" },
+                          "attachments": { "type": "string", "format": "uri" },
+                          "creative_assets": { "type": "string", "format": "uri" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

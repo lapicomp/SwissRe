@@ -1,0 +1,191 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "workflow",
+  "name": "[ES-CMP][V5] Create Tasks from Specific Work Requests",
+  "description": "POC to create task/s from specific work requests",
+  "version": "",
+  "agent_id": "create-tsk-from-wrq-v5",
+  "objective": "",
+  "plan": "",
+  "is_active": true,
+  "is_deleted": false,
+  "agent_metadata": {
+    "edges": [
+      {
+        "id": "efd10e61-7251-4613-87da-7d64f3e645ed",
+        "source": "84e4e615-a57f-4011-95a0-85d3ede0a8bd",
+        "target": "84e4e615-a57f-4011-95a0-85d3ede0a8bd-condition"
+      },
+      {
+        "id": "xy-edge__84e4e615-a57f-4011-95a0-85d3ede0a8bd-conditionsource-right-25a92b56-f9a7-4ca7-8406-721bf1b0f8e7target-body",
+        "source": "84e4e615-a57f-4011-95a0-85d3ede0a8bd-condition",
+        "target": "25a92b56-f9a7-4ca7-8406-721bf1b0f8e7",
+        "sourceHandle": "source-right",
+        "targetHandle": "target-body"
+      },
+      {
+        "id": "xy-edge__84e4e615-a57f-4011-95a0-85d3ede0a8bd-conditionsource-right-83f635cf-29b6-45d7-b1c3-c8de1d3f1e01target-body",
+        "source": "84e4e615-a57f-4011-95a0-85d3ede0a8bd-condition",
+        "target": "83f635cf-29b6-45d7-b1c3-c8de1d3f1e01",
+        "sourceHandle": "source-right",
+        "targetHandle": "target-body"
+      },
+      {
+        "id": "xy-edge__25a92b56-f9a7-4ca7-8406-721bf1b0f8e7source-right-1e91d106-af3e-4981-b862-09cad18d46c7target-body",
+        "source": "25a92b56-f9a7-4ca7-8406-721bf1b0f8e7",
+        "target": "1e91d106-af3e-4981-b862-09cad18d46c7",
+        "sourceHandle": "source-right",
+        "targetHandle": "target-body"
+      },
+      {
+        "id": "xy-edge__5f59f42d-0018-4973-8887-8f6ecc8e2e40source-right-84e4e615-a57f-4011-95a0-85d3ede0a8bdtarget-body",
+        "source": "5f59f42d-0018-4973-8887-8f6ecc8e2e40",
+        "target": "84e4e615-a57f-4011-95a0-85d3ede0a8bd",
+        "sourceHandle": "source-right",
+        "targetHandle": "target-body"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "5f59f42d-0018-4973-8887-8f6ecc8e2e40",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 195,
+          "y": -150
+        }
+      },
+      {
+        "id": "84e4e615-a57f-4011-95a0-85d3ede0a8bd",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 510,
+          "y": -150
+        }
+      },
+      {
+        "id": "84e4e615-a57f-4011-95a0-85d3ede0a8bd-condition",
+        "measured": {
+          "width": 248,
+          "height": 92
+        },
+        "position": {
+          "x": 810,
+          "y": -150
+        }
+      },
+      {
+        "id": "25a92b56-f9a7-4ca7-8406-721bf1b0f8e7",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 1170,
+          "y": -360
+        }
+      },
+      {
+        "id": "1e91d106-af3e-4981-b862-09cad18d46c7",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 1500,
+          "y": -360
+        }
+      },
+      {
+        "id": "83f635cf-29b6-45d7-b1c3-c8de1d3f1e01",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 1170,
+          "y": -15
+        }
+      }
+    ]
+  },
+  "internal_version": 40,
+  "steps": [
+    {
+      "step_id": "25a92b56-f9a7-4ca7-8406-721bf1b0f8e7",
+      "step_type": "specialized",
+      "name": "[ES-CMP][V5] Create and Update Standard Task from Work Request",
+      "description": "Create main CMP task from work request. Owner MUST be the WR assignee_id. Passes through has_supporting_activity from input — never recomputes it. Sends email exactly once.",
+      "agent_id": "es-cmp-v5-create-task",
+      "parameters_schema": {},
+      "next_step_id": "1e91d106-af3e-4981-b862-09cad18d46c7",
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "1e91d106-af3e-4981-b862-09cad18d46c7",
+      "step_type": "specialized",
+      "name": "[ES-CMP][V5] Create and Update Tasks for Supporting Activity",
+      "description": "Create one CMP task per supporting-activity value (comma-separated). Looks up workflow_id and template_id from mappings.json reference file. Links each task to the work request and updates briefs. Sends email once with all task URLs.",
+      "agent_id": "es-cmp-v5-supporting-activity",
+      "parameters_schema": {},
+      "next_step_id": null,
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "83f635cf-29b6-45d7-b1c3-c8de1d3f1e01",
+      "step_type": "specialized",
+      "name": "[ES-CMP][V5] Create and Update Task from Work Request",
+      "description": "Create main CMP task from work request. Owner MUST be the WR assignee_id. Passes through has_supporting_activity from input — never recomputes it. Sends email exactly once.",
+      "agent_id": "es-cmp-v5-create-task",
+      "parameters_schema": {},
+      "next_step_id": null,
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "84e4e615-a57f-4011-95a0-85d3ede0a8bd",
+      "step_type": "conditional",
+      "name": "[ES-CMP][V5] Process Work Request Details",
+      "description": "Receives webhook_payload directly. Fetches and validates work request. Computes has_supporting_activity (true ONLY for Event Request + non-empty supporting_activity). Returns routing_key for branched workflow variant.",
+      "evaluator_agent_id": "es-cmp-v5-process-wr",
+      "parameters_schema": null,
+      "conditions": [
+        {
+          "matching_condition": "ROUTE_STANDARD",
+          "match_type": "equals",
+          "target_step_id": "83f635cf-29b6-45d7-b1c3-c8de1d3f1e01",
+          "priority": 1
+        },
+        {
+          "matching_condition": "ROUTE_EVENT_SA",
+          "match_type": "equals",
+          "target_step_id": "25a92b56-f9a7-4ca7-8406-721bf1b0f8e7",
+          "priority": 0
+        }
+      ],
+      "timeout_seconds": 3600
+    }
+  ],
+  "specialized_agents_required": [
+    "es-cmp-v5-supporting-activity",
+    "es-cmp-v5-create-task",
+    "es-cmp-v5-process-wr"
+  ],
+  "triggers": [
+    {
+      "trigger_id": "5f59f42d-0018-4973-8887-8f6ecc8e2e40",
+      "trigger_type": "webhook",
+      "name": "Webhook",
+      "description": "Trigger via webhook",
+      "is_active": true,
+      "auth_key": "Csm2vDE6rc",
+      "auth_header_name": "callback-secret",
+      "auth_header_format": "{token}",
+      "payload_content_type": "application/json"
+    }
+  ]
+}
