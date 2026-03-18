@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/lara.pirdaoud/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/2b802356-756b-4e6d-8dd8-87175ea8bad1/b8c3a57c-c642-4d2b-bd5d-9136bd0e84a3/skills/xlsx/**)",
+      "Bash(python -:*)",
+      "Bash(python3 -:*)",
+      "Bash(where py:*)",
+      "Bash(where python3.exe)",
+      "Bash(ls /c/Python*)",
+      "Read(//c/Users/lara.pirdaoud/AppData/Local/Programs/**)",
+      "Bash(py --version)",
+      "Bash(/c/Users/lara.pirdaoud/AppData/Local/Programs/Python/Python*/python.exe)",
+      "Bash(--version)",
+      "Bash(node -e \":*)",
+      "Read(//c/Users/lara.pirdaoud/Downloads/**)",
+      "Read(//c/Comprend/Automations/SwissRe/**)",
+      "Bash(node -e \"const ExcelJS = require\\(''''exceljs''''\\);\")",
+      "Bash(npm install:*)"
+    ]
+  }
+}
