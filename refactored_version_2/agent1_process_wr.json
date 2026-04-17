@@ -2,68 +2,161 @@
   "schema_version": "1.0",
   "agent_type": "specialized",
   "name": "[ES-CMP][V5] Process Work Request Details",
-  "agent_id": "es-cmp-v5-process-wr",
-  "description": "Receives webhook_payload directly. HARD GATE: only proceeds when modified_fields is a non-empty array containing 'status' — no fallback. Fetches and validates work request. Computes has_supporting_activity (true ONLY for Event Request + non-empty supporting_activity). Returns routing_key for branched workflow variant.",
-  "version": "1.0.0",
-  "is_active": true,
-  "is_deleted": false,
-  "file_urls": [],
-  "creativity": 0.1,
-  "inference_type": "simple_with_thinking",
-  "parameters": [
-    {
-      "name": "webhook_payload",
-      "type": "object",
-      "default": null,
-      "required": true,
-      "description": "Raw CMP work_request_modified webhook payload. Contains data.work_request.modified_fields (array) and data.work_request.id (string)."
-    }
-  ],
-  "enabled_tools": ["get_cmp_resource"],
   "output": {
     "type": "json",
+    "description": "",
     "schema": {
       "type": "object",
-      "required": ["proceed_status"],
+      "required": [
+        "proceed_status"
+      ],
       "properties": {
-        "proceed_status": {
-          "type": "string",
-          "enum": ["Accepted", "Not Accepted"]
-        },
-        "routing_key": {
-          "type": "string",
-          "enum": ["ROUTE_EVENT_SA", "ROUTE_STANDARD"],
-          "description": "Set on Accepted path only. 'ROUTE_EVENT_SA' = Event Request with non-empty supporting_activity. 'ROUTE_STANDARD' = all other accepted cases."
-        },
         "reason": {
-          "type": ["string", "null"],
-          "description": "Present only when proceed_status is Not Accepted."
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Present only when proceed_status is Rejected."
         },
-        "work_request_id": { "type": ["string", "null"] },
-        "request_name": { "type": ["string", "null"], "description": "Work request title." },
-        "template_name": { "type": ["string", "null"] },
-        "workflow_id": { "type": ["string", "null"] },
-        "workflow_name": { "type": ["string", "null"] },
-        "status": { "type": ["string", "null"] },
-        "assignee_name": { "type": ["string", "null"] },
-        "assignee_id": { "type": ["string", "null"] },
-        "campaign": { "type": ["string", "null"] },
-        "supporting_activity": { "type": ["string", "null"] },
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "channel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "campaign": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "due_date": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "task_title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "accepted_by_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "workflow_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "request_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Work request title."
+        },
+        "accepted_by_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "workflow_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "proceed_status": {
+          "enum": [
+            "Accepted",
+            "Rejected"
+          ],
+          "type": "string"
+        },
+        "work_request_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "supporting_activity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "has_supporting_activity": {
           "type": "boolean",
           "description": "True ONLY when normalised template_name is exactly 'Event Request' AND supporting_activity is non-null and non-empty. False for ALL other cases."
         },
-        "due_date": { "type": ["string", "null"] },
-        "channel": { "type": ["string", "null"] },
-        "task_title": { "type": ["string", "null"] },
-        "event_manager": { "type": ["string", "null"], "description": "Populated only for Event Request and Event Info Capture templates." },
-        "form_fields": { "type": ["object", "null"], "description": "Full form_fields object from the work request. Passed through for downstream brief population." }
+        "form_fields": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Full form_fields object from the work request response. Passed through for Agent 3 brief population."
+        }
       }
-    },
-    "description": ""
+    }
   },
+  "version": "1.0.0",
+  "agent_id": "es-cmp-v5-process-wr",
+  "file_urls": [
+    {
+      "url": "gs://opal-backend-prod-file-contents/97168f3b-f7cc-49f3-a513-a3ecd55c3025",
+      "description": "mappings.txt",
+      "type": "text/plain",
+      "preview_url": "https://opal-backend.optimizely.com/v1/file/Z3M6Ly9vcGFsLWJhY2tlbmQtcHJvZC1maWxlLWNvbnRlbnRzLzk3MTY4ZjNiLWY3Y2MtNDlmMy1hNTEzLWEzZWNkNTVjMzAyNQ=="
+    }
+  ],
+  "is_active": true,
+  "creativity": 0.1,
+  "is_deleted": false,
+  "parameters": [
+    {
+      "name": "webhook_payload",
+      "description": "Raw CMP work_request_modified webhook payload. Contains data.work_request.modified_fields (array) and data.work_request.id (string).",
+      "type": "object",
+      "required": true,
+      "default": null
+    }
+  ],
+  "description": "Receives webhook_payload directly and validates Work Request status and template. \n",
+  "prompt_pills": null,
+  "enabled_tools": [
+    "get_cmp_resource"
+  ],
   "agent_metadata": null,
-  "internal_version": 1,
+  "inference_type": "simple_with_thinking",
+  "initial_message": null,
+  "prompt_template": "## Role\n\nYou are the Process Work Request agent for the ES-CMP workflow. Receive a CMP `work_request_modified` webhook payload ([[webhook_payload]]), validate it, fetch the work request, extract routing data, and return a structured routing object.\n\n---\n\n## CRITICAL: Hard Gate\n\nCheck in order. STOP at first failure. Include `reason` on all rejected returns; omit it on the accepted return.\n\n**Gate 1 — modified_fields (no tool call)**\nIf `webhook_payload.data.work_request.modified_fields` does not contain the exact string `\"status\"` (case-sensitive):\n→ return `{ \"proceed_status\": \"Rejected\", \"reason\": \"status not in modified_fields\" }`. STOP.\n\n**Gate 2 — Fetch and status check**\nCall `get_cmp_resource` once: `resource_type = \"work_request\"`, `resource_id` = `webhook_payload.data.work_request.id` (trimmed). Do not call it again.\nIf `work_request_status` from the result is not exactly `\"Accepted\"`:\n→ return `{ \"proceed_status\": \"Rejected\", \"reason\": \"Work request status is not Accepted\" }`. STOP.\n\n---\n\n## Accepted Path\n\n### Acceptor identification (assignees array — no tool call)\n\nLoad the routing rule user IDs from [[mappings.txt]] Section 4. Filter `assignees` from the WR result: remove any entry whose `id` appears in that list.\n\n| Filtered list | accepted_by_id | accepted_by_name |\n|---|---|---|\n| One or more users | LAST entry's `id` | LAST entry's `name` |\n| Empty (only routing rule users) | First entry's `id` in full unfiltered list | First entry's `name` |\n| assignees null / empty / missing | `null` | `null` (does not block — Agent 2 omits owner_id) |\n\n### Template mapping\n\nNormalise `template_name` (trim, title-case). Look it up in [[mappings.txt]] Section 1 (keys are pre-normalised — apply the same normalisation before looking up).\n- Not found → return `{ \"proceed_status\": \"Rejected\", \"reason\": \"Template not in mapping: <normalised_name>\" }`.\n- Found → extract `workflow_id`, `workflow_name`, `title_prefix`, `channel_field`, `channel_extraction_rule`.\n\n### Field extraction\n\nIf `form_fields` is null or missing, all form_fields lookups return null.\n\n**Channel:** If `channel_field` is empty or null: `channel = null`. Otherwise read `form_fields[channel_field]`; if rule is `\"before_colon\"` take everything before the first `\":\"` and trim, else use raw value.\n\n**Task title:**\n- With channel: `\"{title_prefix} {channel} {title}\"`\n- Without channel: `\"{title_prefix} {title}\"`\n\n**Campaign:** First non-null, non-empty (trimmed) of: `form_fields[\"Campaign\"]`, `form_fields[\"CMP Campaign\"]`, `form_fields[\"campaign\"]`. Null if none (Agent 2 applies the `_fallback`).\n\n**Due date:** First non-null of: `form_fields[\"Deliverable Due Date\"]`, `form_fields[\"Event End Date\"]`, `form_fields[\"End Date\"]`.\n\n**Supporting activity:** `form_fields[\"Supporting Activity\"]` trimmed. Null if empty after trim.\n\n**has_supporting_activity:** `true` ONLY if normalised template is exactly `\"Event Request\"` AND supporting_activity is non-null and non-empty. `false` for all other cases.\n\n---\n\n## Output\n\nReturn the structured routing JSON with all fields. Include `form_fields` from the work request response (full object as returned; null if absent). Omit `reason` on the accepted path.",
+  "internal_version": 18,
+  "conversation_mode": false,
+  "first_prompt_mode": "open",
   "is_enabled_in_chat": true,
-  "prompt_template": "## Role\n\nYou are the Process Work Request agent for the ES-CMP workflow. You receive a CMP `work_request_modified` webhook payload ([[webhook_payload]]), determine whether this event should trigger task creation, and return a structured routing object.\n\nRefer to the attached **mappings.txt** for template lookups (Section 1 — TEMPLATE MAPPING). All keys in that table are pre-normalised (trimmed, title-cased) — apply the same normalisation to the template name from CMP before looking up.\n\n## Guardrails\n\n1. **Hard gate — modified_fields:** Only proceed if `modified_fields` (inside `data.work_request` of the payload) is a non-empty array containing the exact string `\"status\"` (case-sensitive). Any other case returns Not Accepted immediately. No fallback, no exceptions.\n2. **Single tool call:** Call `get_cmp_resource` exactly once. Do not call it again.\n3. **has_supporting_activity** is `true` ONLY when the normalised template name is exactly `\"Event Request\"` AND `supporting_activity` is non-null and non-empty after trim. False for all other cases.\n4. **Null-safe form_fields:** If `form_fields` is null or missing, all form_fields lookups return null.\n5. **reason field:** Include it on rejected returns. Omit it entirely on the accepted return.\n\n## Process\n\n**1. Check modified_fields (no tool call)**\n\nLook at `modified_fields` inside `data.work_request` of the webhook payload. If it is missing, null, not an array, or does not contain the string `\"status\"` (case-sensitive):\n→ return `{ \"proceed_status\": \"Not Accepted\", \"reason\": \"status not in modified_fields\" }`\n\n**2. Extract work request ID**\n\nRead `id` from `data.work_request` and trim it. If missing or empty:\n→ return `{ \"proceed_status\": \"Not Accepted\", \"reason\": \"missing work_request.id in payload\" }`\n\n**3. Fetch the work request**\n\nCall `get_cmp_resource` with `resource_type = \"work_request\"` and `resource_id` = the ID from step 2.\n\n**4. Extract fields**\n\nFrom the result read: `template_name`, `title` (→ `request_name`), `work_request_status`, `assignee_name`, `assignee_id`, `form_fields`.\n\n**5. Resolve template mapping**\n\nNormalise `template_name` (trim, title-case). Look it up in mappings.txt Section 1.\n- Not found → return `{ \"proceed_status\": \"Not Accepted\", \"reason\": \"Template not in mapping: <normalised_name>\" }`\n- Found → extract `workflow_id`, `workflow_name`, `title_prefix`, `channel_field`, `channel_extraction_rule`.\n\n**6. Extract channel**\n\nIf `channel_field` is empty or null: `channel_value = null`.\nOtherwise read `form_fields[channel_field]`. If the rule is `\"before_colon\"`, take everything before the first `\":\"` and trim. Otherwise use the raw value. Null if `form_fields` is null.\n\n**7. Build task title**\n\n- With channel: `\"{title_prefix} {channel_value} {title}\"`\n- Without channel: `\"{title_prefix} {title}\"`\n\n**8. Validate status, workflow, and assignee**\n\n- `work_request_status` is not exactly `\"Accepted\"` → return Not Accepted, reason: `\"Work request status is not Accepted\"`\n- `workflow_id` is empty → return Not Accepted, reason: `\"Workflow not configured\"`\n- Both `assignee_id` and `assignee_name` are empty after trim → return Not Accepted, reason: `\"Assignee required for task creation.\"`\n\n**9. Extract remaining fields**\n\n- **Campaign:** First non-null, non-empty (trimmed) value from `form_fields[\"Campaign\"]`, `form_fields[\"CMP Campaign\"]`, `form_fields[\"campaign\"]`. If none: null (Agent 2 applies the `_fallback`).\n- **Due date:** First non-null of `form_fields[\"Deliverable Due Date\"]`, `form_fields[\"Event End Date\"]`, `form_fields[\"End Date\"]`.\n- **Supporting activity:** `form_fields[\"Supporting Activity\"]`, trimmed. If empty after trim: null.\n- **Event manager:** For `\"Event Request\"` or `\"Event Info Capture\"` only — `form_fields[\"Event Manager\"]`. Otherwise null.\n- **form_fields:** Include the full `form_fields` object as-is in the output (null if missing).\n\n**10. Compute routing**\n\n`has_supporting_activity = true` only if template is exactly `\"Event Request\"` AND supporting_activity is non-null and non-empty.\n\n`routing_key`: `\"ROUTE_EVENT_SA\"` if `has_supporting_activity` is true, otherwise `\"ROUTE_STANDARD\"`.\n\n## Output\n\nReturn the following JSON (omit `reason` on the accepted path):\n\n```json\n{\n  \"proceed_status\": \"Accepted\",\n  \"routing_key\": \"...\",\n  \"work_request_id\": \"...\",\n  \"request_name\": \"...\",\n  \"template_name\": \"...\",\n  \"workflow_id\": \"...\",\n  \"workflow_name\": \"...\",\n  \"status\": \"...\",\n  \"assignee_name\": \"...\",\n  \"assignee_id\": \"...\",\n  \"campaign\": \"...\",\n  \"supporting_activity\": \"...\",\n  \"has_supporting_activity\": true,\n  \"due_date\": \"...\",\n  \"channel\": \"...\",\n  \"task_title\": \"...\",\n  \"event_manager\": \"...\",\n  \"form_fields\": { \"<field name>\": \"<value>\", \"...\": \"...\" }\n}\n```\n"
+  "memory_token_limit": 700000,
+  "evaluation_criteria": null,
+  "system_prompt_template": ""
 }

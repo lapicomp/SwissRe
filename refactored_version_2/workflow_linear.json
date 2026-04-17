@@ -11,68 +11,162 @@
   "is_deleted": false,
   "agent_metadata": {
     "edges": [
-      { "id": "e5000001-6d4e-4f01-9a22-000000000001", "source": "d0a1b2c3-98a8-4665-9d95-7ca1223b2360", "target": "b5555552-6d4e-4f01-9a22-555555555552", "sourceHandle": "source-right-circle", "targetHandle": "target-body" },
-      { "id": "e5000002-6d4e-4f01-9a22-000000000002", "source": "b5555552-6d4e-4f01-9a22-555555555552", "target": "b5555552-6d4e-4f01-9a22-555555555552-condition-pw", "sourceHandle": "source-right", "targetHandle": "target-body" },
-      { "id": "e5000003-6d4e-4f01-9a22-000000000003", "source": "b5555552-6d4e-4f01-9a22-555555555552-condition-pw", "target": "c5555553-6d4e-4f01-9a22-555555555553", "sourceHandle": "source-right", "targetHandle": "target-body" },
-      { "id": "e5000004-6d4e-4f01-9a22-000000000004", "source": "c5555553-6d4e-4f01-9a22-555555555553", "target": "c5555553-6d4e-4f01-9a22-555555555553-condition-ct", "sourceHandle": "source-right", "targetHandle": "target-body" },
-      { "id": "e5000005-6d4e-4f01-9a22-000000000005", "source": "c5555553-6d4e-4f01-9a22-555555555553-condition-ct", "target": "d5555554-6d4e-4f01-9a22-555555555554", "sourceHandle": "source-right", "targetHandle": "target-body" }
+      {
+        "id": "48e23b66-4201-44e3-883b-dc9a064db8c5",
+        "source": "6e56832a-d96b-4e09-963f-735efe28e35f",
+        "target": "6e56832a-d96b-4e09-963f-735efe28e35f-condition"
+      },
+      {
+        "id": "66cf9d56-f87b-44a9-b73a-84fc0822eb67",
+        "source": "6e56832a-d96b-4e09-963f-735efe28e35f-condition",
+        "target": "cb1a0260-4edd-442f-afb8-514c47d7cb21"
+      },
+      {
+        "id": "68e63922-9b61-44fb-8d76-a90ed78e160d",
+        "source": "cb1a0260-4edd-442f-afb8-514c47d7cb21",
+        "target": "cb1a0260-4edd-442f-afb8-514c47d7cb21-condition"
+      },
+      {
+        "id": "xy-edge__cb1a0260-4edd-442f-afb8-514c47d7cb21-conditionsource-right-24db286d-a5ec-430f-98e6-368fc09b2462target-body",
+        "source": "cb1a0260-4edd-442f-afb8-514c47d7cb21-condition",
+        "target": "24db286d-a5ec-430f-98e6-368fc09b2462",
+        "sourceHandle": "source-right",
+        "targetHandle": "target-body"
+      },
+      {
+        "id": "xy-edge__22fb9306-ddb2-4bd9-b6a9-e5e1aea3804dsource-right-a153bcc2-866f-4b61-8958-70d9e4d61219target-body",
+        "source": "22fb9306-ddb2-4bd9-b6a9-e5e1aea3804d",
+        "target": "6e56832a-d96b-4e09-963f-735efe28e35f",
+        "sourceHandle": "source-right",
+        "targetHandle": "target-body"
+      }
     ],
     "nodes": [
-      { "id": "d0a1b2c3-98a8-4665-9d95-7ca1223b2360", "measured": { "width": 248, "height": 108 }, "position": { "x": 30, "y": -165 } },
-      { "id": "b5555552-6d4e-4f01-9a22-555555555552", "measured": { "width": 248, "height": 108 }, "position": { "x": 330, "y": -30 } },
-      { "id": "b5555552-6d4e-4f01-9a22-555555555552-condition-pw", "measured": { "width": 248, "height": 92 }, "position": { "x": 645, "y": -180 } },
-      { "id": "c5555553-6d4e-4f01-9a22-555555555553", "measured": { "width": 248, "height": 108 }, "position": { "x": 960, "y": -30 } },
-      { "id": "c5555553-6d4e-4f01-9a22-555555555553-condition-ct", "measured": { "width": 248, "height": 92 }, "position": { "x": 1275, "y": -180 } },
-      { "id": "d5555554-6d4e-4f01-9a22-555555555554", "measured": { "width": 248, "height": 108 }, "position": { "x": 1575, "y": -30 } }
+      {
+        "id": "22fb9306-ddb2-4bd9-b6a9-e5e1aea3804d",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": -120,
+          "y": -150
+        }
+      },
+      {
+        "id": "6e56832a-d96b-4e09-963f-735efe28e35f",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 180,
+          "y": -15
+        }
+      },
+      {
+        "id": "6e56832a-d96b-4e09-963f-735efe28e35f-condition",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 480,
+          "y": -195
+        }
+      },
+      {
+        "id": "cb1a0260-4edd-442f-afb8-514c47d7cb21",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 750,
+          "y": -30
+        }
+      },
+      {
+        "id": "cb1a0260-4edd-442f-afb8-514c47d7cb21-condition",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 1080,
+          "y": -180
+        }
+      },
+      {
+        "id": "24db286d-a5ec-430f-98e6-368fc09b2462",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 1380,
+          "y": -60
+        }
+      }
     ]
   },
-  "internal_version": 1,
+  "internal_version": 67,
   "steps": [
     {
-      "step_id": "d5555554-6d4e-4f01-9a22-555555555554",
+      "step_id": "24db286d-a5ec-430f-98e6-368fc09b2462",
       "step_type": "specialized",
       "name": "[ES-CMP][V5] Create and Update Tasks for Supporting Activity",
-      "description": "Create tasks based on Supporting Activity field values and update metadata.",
+      "description": "Create one CMP task per supporting-activity value. Links each task to the work request and updates briefs. ",
       "agent_id": "es-cmp-v5-supporting-activity",
       "parameters_schema": {},
       "next_step_id": null,
       "timeout_seconds": 3600
     },
     {
-      "step_id": "c5555553-6d4e-4f01-9a22-555555555553",
-      "step_type": "conditional",
-      "name": "[ES-CMP][V5] Create and Update Task from Work Request",
-      "description": "Create main task from work request; branch on has_supporting_activity (true only for Event Request with supporting activities).",
-      "evaluator_agent_id": "es-cmp-v5-create-task",
-      "parameters_schema": null,
-      "conditions": [
-        { "matching_condition": "true", "match_type": "equals", "target_step_id": "d5555554-6d4e-4f01-9a22-555555555554", "priority": 0 }
-      ],
-      "timeout_seconds": 3600
-    },
-    {
-      "step_id": "b5555552-6d4e-4f01-9a22-555555555552",
+      "step_id": "6e56832a-d96b-4e09-963f-735efe28e35f",
       "step_type": "conditional",
       "name": "[ES-CMP][V5] Process Work Request Details",
-      "description": "Hard gate on modified_fields (only proceeds when 'status' is present). Fetches and validates work request. Computes has_supporting_activity. Returns routing_key.",
+      "description": "Receives webhook_payload directly. Fetches and validates work request. ",
       "evaluator_agent_id": "es-cmp-v5-process-wr",
       "parameters_schema": {
         "webhook_payload": "{{webhook_payload}}"
       },
       "conditions": [
-        { "matching_condition": "Accepted", "match_type": "equals", "target_step_id": "c5555553-6d4e-4f01-9a22-555555555553", "priority": 0 }
+        {
+          "matching_condition": "Accepted",
+          "match_type": "equals",
+          "target_step_id": "cb1a0260-4edd-442f-afb8-514c47d7cb21",
+          "priority": 0
+        }
+      ],
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "cb1a0260-4edd-442f-afb8-514c47d7cb21",
+      "step_type": "conditional",
+      "name": "[ES-CMP][V5] Create and Update Task from Work Request",
+      "description": "Create main CMP task from work request. ",
+      "evaluator_agent_id": "es-cmp-v5-create-task",
+      "parameters_schema": null,
+      "conditions": [
+        {
+          "matching_condition": "true",
+          "match_type": "equals",
+          "target_step_id": "24db286d-a5ec-430f-98e6-368fc09b2462",
+          "priority": 0
+        }
       ],
       "timeout_seconds": 3600
     }
   ],
   "specialized_agents_required": [
-    "es-cmp-v5-process-wr",
+    "es-cmp-v5-supporting-activity",
     "es-cmp-v5-create-task",
-    "es-cmp-v5-supporting-activity"
+    "es-cmp-v5-process-wr"
   ],
   "triggers": [
     {
-      "trigger_id": "d0a1b2c3-98a8-4665-9d95-7ca1223b2360",
+      "trigger_id": "22fb9306-ddb2-4bd9-b6a9-e5e1aea3804d",
       "trigger_type": "webhook",
       "name": "cmp_work_request_modified_event_v5_linear",
       "description": "Trigger via webhook on work_request_modified.",
@@ -80,48 +174,7 @@
       "auth_key": "Csm2vDE6rc",
       "auth_header_name": "callback-secret",
       "auth_header_format": "{token}",
-      "payload_content_type": "application/json",
-      "payload_schema": {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "title": "Opal Trigger Input Schema",
-        "type": "object",
-        "properties": {
-          "trigger_id": { "type": "string" },
-          "received_at": { "type": "string" },
-          "trigger_name": { "type": "string" },
-          "webhook_headers": { "type": "object" },
-          "webhook_payload": {
-            "type": "object",
-            "description": "The raw CMP webhook body.",
-            "properties": {
-              "event_name": { "type": "string" },
-              "data": {
-                "type": "object",
-                "properties": {
-                  "work_request": {
-                    "type": "object",
-                    "properties": {
-                      "id": { "type": "string" },
-                      "modified_fields": { "type": "array", "items": { "type": "string" } },
-                      "identifiers_of_modified_form_fields": { "type": "array", "items": { "type": "string" } },
-                      "links": {
-                        "type": "object",
-                        "properties": {
-                          "self": { "type": "string", "format": "uri" },
-                          "comments": { "type": "string", "format": "uri" },
-                          "campaigns": { "type": "string", "format": "uri" },
-                          "attachments": { "type": "string", "format": "uri" },
-                          "creative_assets": { "type": "string", "format": "uri" }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+      "payload_content_type": "application/json"
     }
   ]
 }

@@ -1,0 +1,631 @@
+{
+  "template": {
+    "id": "04aa90cd126b424a967c3b51741bd6d7",
+    "links": {
+      "self": "https://api.cmp.optimizely.com/v3/templates/04aa90cd126b424a967c3b51741bd6d7"
+    },
+    "title": "Web requests (MARKETING)",
+    "is_active": true,
+    "description": "For Branding & Marketing teams to request a new webpage, change on an existing webpage or on-page SEO",
+    "form_fields": [
+      {
+        "type": "text",
+        "label": "Title",
+        "identifier": "title",
+        "sort_order": 0,
+        "helper_text": "",
+        "is_readonly": false,
+        "is_required": true,
+        "logic_rules": [],
+        "association_id": "title",
+        "type_specific_meta": null
+      },
+      {
+        "type": "label",
+        "label": "Business Unit",
+        "identifier": "8942352880af11eb95aac1a5ae9edb30",
+        "sort_order": 1,
+        "helper_text": "",
+        "is_readonly": false,
+        "is_required": true,
+        "logic_rules": [],
+        "association_id": "0df70b615e3844499cab370e16008d4f",
+        "type_specific_meta": {
+          "choices": [
+            {
+              "id": "8942352980af11eb95aac1a5ae9edb30",
+              "name": "Group"
+            },
+            {
+              "id": "933622c980bf11eba0d55ffa1acb4ccc",
+              "name": "CorSo"
+            },
+            {
+              "id": "5577f120479211f097d20ac3a5c39783",
+              "name": "L&H Re"
+            },
+            {
+              "id": "55796546479211f097d20ac3a5c39783",
+              "name": "Other"
+            },
+            {
+              "id": "557abe14479211f097d20ac3a5c39783",
+              "name": "P&C Re"
+            },
+            {
+              "id": "557bfa0e479211f097d20ac3a5c39783",
+              "name": "Risk Data Solutions"
+            },
+            {
+              "id": "a4cb1e94285811f19802e6c948952f39",
+              "name": "– Choose –"
+            }
+          ],
+          "is_multi_select": true
+        }
+      },
+      {
+        "type": "label",
+        "label": "Region",
+        "identifier": "d912d57780af11ebb059ad6d7031d363",
+        "sort_order": 2,
+        "helper_text": "",
+        "is_readonly": false,
+        "is_required": true,
+        "logic_rules": [],
+        "association_id": "27d2a37d1b89aaf39a81f45c7f1344d9",
+        "type_specific_meta": {
+          "choices": [
+            {
+              "id": "d912d57880af11ebb059ad6d7031d363",
+              "name": "Global"
+            },
+            {
+              "id": "d912d57980af11ebb059ad6d7031d363",
+              "name": "EMEA"
+            },
+            {
+              "id": "d912d57a80af11ebb059ad6d7031d363",
+              "name": "AMERICAS"
+            },
+            {
+              "id": "d912d57b80af11ebb059ad6d7031d363",
+              "name": "APAC"
+            },
+            {
+              "id": "c70b1b76285811f1bc4aaa9a03bdb9de",
+              "name": "– Choose –"
+            }
+          ],
+          "is_multi_select": false
+        }
+      },
+      {
+        "type": "label",
+        "label": "Campaign",
+        "identifier": "f11e5bcac6c511f0b1fc0e731cb5ec8a",
+        "sort_order": 3,
+        "helper_text": "",
+        "is_readonly": false,
+        "is_required": true,
+        "logic_rules": [],
+        "association_id": "7ee589a701bc476c29c15956f4bdd679",
+        "type_specific_meta": {
+          "choices": [
+            {
+              "id": "f11f2c08c6c511f0b1fc0e731cb5ec8a",
+              "name": "Forward in Life (2025)"
+            },
+            {
+              "id": "f120fd6cc6c511f0b1fc0e731cb5ec8a",
+              "name": "Future Ready Resilience (2025)"
+            },
+            {
+              "id": "f1229f28c6c511f0b1fc0e731cb5ec8a",
+              "name": "Reinsurance Recalibrated (2025)"
+            },
+            {
+              "id": "35d201ccceb911f0a8ed7eea3c8edee7",
+              "name": "Captives & Fronting (2025)"
+            },
+            {
+              "id": "35d3cadeceb911f0a8ed7eea3c8edee7",
+              "name": "Event: RVS Monte Carlo (2025)"
+            },
+            {
+              "id": "7f9fb7fed45911f0abc9aa374495c2c4",
+              "name": "IP/PULSE & Network (2025)"
+            },
+            {
+              "id": "653752a2f16711f085ce2e082ff4679d",
+              "name": "Event: Baden Baden (2025)"
+            },
+            {
+              "id": "65388172f16711f085ce2e082ff4679d",
+              "name": "Financial & Structured Solutions (2025)"
+            },
+            {
+              "id": "6539f098f16711f085ce2e082ff4679d",
+              "name": "RDS Platform Overall (2025)"
+            },
+            {
+              "id": "653b884af16711f085ce2e082ff4679d",
+              "name": "RDS Property Exposure (2025)"
+            },
+            {
+              "id": "fc0078a4f5f311f0b27fc2d57e336b26",
+              "name": "– Choose –"
+            }
+          ],
+          "is_multi_select": true
+        }
+      },
+      {
+        "type": "text_area",
+        "label": "Description",
+        "identifier": "62558d079b8f8bb9aabb12c4",
+        "sort_order": 4,
+        "helper_text": "",
+        "is_readonly": false,
+        "is_required": true,
+        "logic_rules": [],
+        "association_id": "0f27a1412eb8dd39dcb144d62cab16d9",
+        "type_specific_meta": null
+      },
+      {
+        "type": "radio_button",
+        "label": "Type of Web Request",
+        "identifier": "617143c63ef08f36412f5b54",
+        "sort_order": 5,
+        "helper_text": "",
+        "is_readonly": false,
+        "is_required": true,
+        "logic_rules": [
+          {
+            "action": {
+              "type": "jump_to",
+              "values": [],
+              "target_field": {
+                "identifier": "92edeac4ba32220c5d8d5beaa172f74e",
+                "association_id": "92edeac4ba32220c5d8d5beaa172f74e"
+              }
+            },
+            "condition": {
+              "values": [
+                "617143c63ef08f40ec2f5b55"
+              ],
+              "operator": "equal"
+            }
+          },
+          {
+            "action": {
+              "type": "jump_to",
+              "values": [],
+              "target_field": {
+                "identifier": "862e9dbe5f05ca98edb32f66d0487324",
+                "association_id": "862e9dbe5f05ca98edb32f66d0487324"
+              }
+            },
+            "condition": {
+              "values": [
+                "617143c63ef08f46152f5b56"
+              ],
+              "operator": "equal"
+            }
+          },
+          {
+            "action": {
+              "type": "jump_to",
+              "values": [],
+              "target_field": {
+                "identifier": "6327c8c2067762e6d1f3365a04e7d081",
+                "association_id": "6327c8c2067762e6d1f3365a04e7d081"
+              }
+            },
+            "condition": {
+              "values": [
+                "6842cd8a87e6bea29ee1753d"
+              ],
+              "operator": "equal"
+            }
+          }
+        ],
+        "association_id": "3ad62e2618e5faecdad9e09a6cadbe53",
+        "type_specific_meta": {
+          "choices": [
+            {
+              "id": "617143c63ef08f46152f5b56",
+              "name": "Change of an existing webpage"
+            },
+            {
+              "id": "617143c63ef08f40ec2f5b55",
+              "name": "New webpage"
+            },
+            {
+              "id": "6842cd8a87e6bea29ee1753d",
+              "name": "On-page SEO"
+            }
+          ],
+          "is_multi_select": false
+        }
+      },
+      {
+        "type": "section",
+        "label": "New webpage",
+        "identifier": "92edeac4ba32220c5d8d5beaa172f74e",
+        "sort_order": 6,
+        "helper_text": "",
+        "is_readonly": true,
+        "is_required": false,
+        "logic_rules": [],
+        "association_id": "92edeac4ba32220c5d8d5beaa172f74e",
+        "type_specific_meta": null
+      },
+      {
+        "type": "dropdown",
+        "label": "Web content type",
+        "identifier": "6489b672b7f9ccb4e957fb84",
+        "sort_order": 7,
+        "helper_text": "What is the type of web page you would like to create?",
+        "is_readonly": false,
+        "is_required": true,
+        "logic_rules": [],
+        "association_id": "e590293ae7974e23b511b134499fe6af",
+        "type_specific_meta": {
+          "choices": [
+            {
+              "id": "6489b672b7f9ccd95a57fb85",
+              "name": "Article"
+            },
+            {
+              "id": "6489b672b7f9cc482257fb86",
+              "name": "Blog"
+            },
+            {
+              "id": "6489b672b7f9cc50c157fb87",
+              "name": "Case study"
+            },
+            {
+              "id": "6489b672b7f9cc5fd657fb88",
+              "name": "Corporate news"
+            },
+            {
+              "id": "6489b672b7f9cce57457fb8d",
+              "name": "Event / Conference / Webinar"
+            },
+            {
+              "id": "6489bc28b7f9cc91a157fef9",
+              "name": "Landing page"
+            },
+            {
+              "id": "6489b672b7f9cc57cd57fb8b",
+              "name": "Other"
+            },
+            {
+              "id": "6489b672b7f9cc18f057fb89",
+              "name": "Publication"
+            },
+            {
+              "id": "6489bc28b7f9cce7f457fef8",
+              "name": "Solution page"
+            },
+            {
+              "id": "6489b672b7f9cc372357fb8a",
+              "name": "Video"
+            }
+          ],
+          "is_multi_select": false
+        }
+      },
+      {
+        "type": "dropdown",
+        "label": "Web page objective",
+        "identifier": "64b4ea95a24752ddd022d9d2",
+        "sort_order": 8,
+        "helper_text": "Please select, what's the goal of this page (Multiselect is possible).",
+        "is_readonly": false,
+        "is_required": true,
+        "logic_rules": [],
+        "association_id": "425ac8eee6a44fb18ede7d7e73ed0a38",
+        "type_specific_meta": {
+          "choices": [
+            {
+              "id": "64b4ea95a24752cebb22d9d3",
+              "name": "Time spent on the page"
+            },
+            {
+              "id": "64b4ea95a247529dc622d9d4",
+              "name": "Pdf download"
+            },
+            {
+              "id": "64b4ea95a2475290a622d9d5",
+              "name": "Contact / Demo request"
+            },
+            {
+              "id": "64b4ea95a24752d7c322d9d6",
+              "name": "Register / Sign up"
+            }
+          ],
+          "is_multi_select": true
+        }
+      },
+      {
+        "type": "text_area",
+        "label": "Page contacts",
+        "identifier": "6489b776b7f9cc4f3957fcd4",
+        "sort_order": 9,
+        "helper_text": "Provide name of one or more people who will be listed as a contact on the page. Contacts have profile pictures of resolution 480 x 480 pixels, preferably professionally shot, with neutral background.",
+        "is_readonly": false,
+        "is_required": true,
+        "logic_rules": [],
+        "association_id": "6e6f2f35298c44948a66e90125069a9b",
+        "type_specific_meta": null
+      },
+      {
+        "type": "text",
+        "label": "Example pages",
+        "identifier": "64a6c2e4fd522147bfd4bd1f",
+        "sort_order": 10,
+        "helper_text": "Please provide links to pages you want this page to be similar to.",
+        "is_readonly": false,
+        "is_required": true,
+        "logic_rules": [],
+        "association_id": "0efa464d34c34076977d0ced1a06a8fe",
+        "type_specific_meta": null
+      },
+      {
+        "type": "text",
+        "label": "Keywords",
+        "identifier": "64a6bcb4fd5221c79dd4b9ce",
+        "sort_order": 11,
+        "helper_text": "Please add here the key words linking to the webpage",
+        "is_readonly": false,
+        "is_required": false,
+        "logic_rules": [],
+        "association_id": "1bbc6f92271948bab95521a592a9ee04",
+        "type_specific_meta": null
+      },
+      {
+        "type": "text",
+        "label": "Additional information",
+        "identifier": "64a6bd8efd522118c4d4ba2a",
+        "sort_order": 12,
+        "helper_text": "Any other information you want to give the Digital Media team?",
+        "is_readonly": false,
+        "is_required": false,
+        "logic_rules": [],
+        "association_id": "3d9222aedacf4e769692325753b1d534",
+        "type_specific_meta": null
+      },
+      {
+        "type": "text_area",
+        "label": "Preview URL link",
+        "identifier": "64a6bdf9fd52210d57d4ba36",
+        "sort_order": 13,
+        "helper_text": "This link will be added by the Digital Media team when the page is ready for review and not published.",
+        "is_readonly": false,
+        "is_required": false,
+        "logic_rules": [],
+        "association_id": "892e8ac95191430db946874ffd855351",
+        "type_specific_meta": null
+      },
+      {
+        "type": "text",
+        "label": "Live link",
+        "identifier": "64a6c980fd522171d6d4be95",
+        "sort_order": 14,
+        "helper_text": "This link will be added by the Digital Media team when the page is published.",
+        "is_readonly": false,
+        "is_required": false,
+        "logic_rules": [],
+        "association_id": "a2f6d8a862c642359e4e777094b665f4",
+        "type_specific_meta": null
+      },
+      {
+        "type": "section",
+        "label": "On-page SEO",
+        "identifier": "6327c8c2067762e6d1f3365a04e7d081",
+        "sort_order": 15,
+        "helper_text": "",
+        "is_readonly": true,
+        "is_required": false,
+        "logic_rules": [],
+        "association_id": "6327c8c2067762e6d1f3365a04e7d081",
+        "type_specific_meta": null
+      },
+      {
+        "type": "text_area",
+        "label": "Description",
+        "identifier": "62558d079b8f8bb9aabb12c4",
+        "sort_order": 16,
+        "helper_text": "Please share the primary goal of this page to better tailor the keywords",
+        "is_readonly": false,
+        "is_required": false,
+        "logic_rules": [],
+        "association_id": "fa54e1b751133bc960a4cdef3ac316b5",
+        "type_specific_meta": null
+      },
+      {
+        "type": "text_area",
+        "label": "Link / URL",
+        "identifier": "6480b29ec1e1fd4de0f369eb",
+        "sort_order": 17,
+        "helper_text": "",
+        "is_readonly": false,
+        "is_required": false,
+        "logic_rules": [],
+        "association_id": "fd4297d1efaece341b2875e6a640f189",
+        "type_specific_meta": null
+      },
+      {
+        "type": "text_area",
+        "label": "Topics",
+        "identifier": "62fe708d9488889c164b2bb0",
+        "sort_order": 18,
+        "helper_text": "Please list 1-5 topics this page will describe / will be written about",
+        "is_readonly": false,
+        "is_required": false,
+        "logic_rules": [],
+        "association_id": "d88f651dbed4eae7a65268e6ad03373b",
+        "type_specific_meta": null
+      },
+      {
+        "type": "text_area",
+        "label": "Competitors´ Page URL",
+        "identifier": "661552a7388a4054f19780c1",
+        "sort_order": 19,
+        "helper_text": "Please enter the URLs for analysis",
+        "is_readonly": false,
+        "is_required": false,
+        "logic_rules": [],
+        "association_id": "d2ab419b96cf9bcb271321c382a2334b",
+        "type_specific_meta": null
+      },
+      {
+        "type": "text",
+        "label": "Related Content",
+        "identifier": "60c33a45318655043efefad4",
+        "sort_order": 20,
+        "helper_text": "Which Swiss Re pages would be promoted at the bottom of this page?",
+        "is_readonly": false,
+        "is_required": false,
+        "logic_rules": [],
+        "association_id": "8edaf51124800cf94e0a7f1b475e2630",
+        "type_specific_meta": null
+      },
+      {
+        "type": "file",
+        "label": "Attachments",
+        "identifier": "attachment",
+        "sort_order": 21,
+        "helper_text": "Add any relevant files or assets",
+        "is_readonly": false,
+        "is_required": false,
+        "logic_rules": [],
+        "association_id": "d53a64dde0d70c52d70b990d65dbfb55",
+        "type_specific_meta": null
+      },
+      {
+        "type": "section",
+        "label": "Change on an existing webpage",
+        "identifier": "862e9dbe5f05ca98edb32f66d0487324",
+        "sort_order": 23,
+        "helper_text": "",
+        "is_readonly": true,
+        "is_required": false,
+        "logic_rules": [],
+        "association_id": "862e9dbe5f05ca98edb32f66d0487324",
+        "type_specific_meta": null
+      },
+      {
+        "type": "text_area",
+        "label": "Link / URL",
+        "identifier": "6480b29ec1e1fd4de0f369eb",
+        "sort_order": 24,
+        "helper_text": "",
+        "is_readonly": false,
+        "is_required": false,
+        "logic_rules": [],
+        "association_id": "26a66aaf21df75a1c6fe1a67297325ef",
+        "type_specific_meta": null
+      },
+      {
+        "type": "file",
+        "label": "Creative Assets",
+        "identifier": "creative_assets",
+        "sort_order": 25,
+        "helper_text": "Please upload any content relevant for your request",
+        "is_readonly": false,
+        "is_required": false,
+        "logic_rules": [],
+        "association_id": "00eaa160f5d9a84bd8ebbe5e176e2174",
+        "type_specific_meta": null
+      },
+      {
+        "type": "section",
+        "label": "Timing",
+        "identifier": "609eef5ef49b415e9a1fb702dc2f118d",
+        "sort_order": 26,
+        "helper_text": "",
+        "is_readonly": true,
+        "is_required": false,
+        "logic_rules": [],
+        "association_id": "609eef5ef49b415e9a1fb702dc2f118d",
+        "type_specific_meta": null
+      },
+      {
+        "type": "date",
+        "label": "Deliverable Due Date",
+        "identifier": "due_date",
+        "sort_order": 27,
+        "helper_text": "When would you like the changes to be live?",
+        "is_readonly": false,
+        "is_required": true,
+        "logic_rules": [],
+        "association_id": "997aeac95b0f9061323f08a762917e50",
+        "type_specific_meta": null
+      },
+      {
+        "type": "radio_button",
+        "label": "Time sensitivity",
+        "identifier": "6480b2fcc1e1fd9f1bf369ee",
+        "sort_order": 28,
+        "helper_text": "Is it critical to be published exactly on the due date?",
+        "is_readonly": false,
+        "is_required": true,
+        "logic_rules": [],
+        "association_id": "4b2ee687f07aa284fe946f1d5678b12f",
+        "type_specific_meta": {
+          "choices": [
+            {
+              "id": "6480b2fcc1e1fd51a7f369f0",
+              "name": "Fixed Due Date"
+            },
+            {
+              "id": "68b9c2d5ceed9043123b6459",
+              "name": "Indicative Due Date"
+            },
+            {
+              "id": "6480b2fcc1e1fd25dcf369ef",
+              "name": "Urgent"
+            },
+            {
+              "id": "69c3f494ca0c93c55e47d6b5",
+              "name": "– Choose –"
+            }
+          ],
+          "is_multi_select": false
+        }
+      },
+      {
+        "type": "dropdown",
+        "label": "Add Cost Centre 3",
+        "identifier": "65e8a56b82dc2d84f9ee8225",
+        "sort_order": 29,
+        "helper_text": "",
+        "is_readonly": false,
+        "is_required": true,
+        "logic_rules": [],
+        "association_id": "c782155c956b65bac9b7ddeddd0690ea",
+        "type_specific_meta": {
+          "choices": [
+            {
+              "id": "65e8a76382dc2d88d5ee950d",
+              "name": "No"
+            },
+            {
+              "id": "65e8a56b82dc2da210ee8226",
+              "name": "Yes"
+            }
+          ],
+          "is_multi_select": false
+        }
+      }
+    ],
+    "applicable_to": [
+      "work_request",
+      "campaign_brief",
+      "task_brief"
+    ]
+  }
+}
