@@ -1,5 +1,6 @@
-ES-CMP V5 MAPPINGS REFERENCE
+ES-CMP V6 MAPPINGS REFERENCE
 ==============================
+Used by V6 agents (es-cmp-v6-validate-wr, es-cmp-v6-create-task, es-cmp-v6-supporting-activity).
 
 All keys are normalised (trimmed, title-cased). Apply the same normalisation before lookup.
 Campaign and activity lookups are case-insensitive (compare lowercased, trimmed values).
@@ -7,7 +8,7 @@ Campaign and activity lookups are case-insensitive (compare lowercased, trimmed 
 ==============================================
 SECTION 1 — WORK REQUEST TEMPLATE MAPPING
 ==============================================
-Used by: Agent 1 (Process WR)
+Used by: Agent 2 (Validate WR)
 Purpose: Maps CMP work request template name to workflow and task title prefix.
 Note: "Event Request" may appear as "Event" in the CMP test instance — treat both as the same entry.
 
@@ -23,7 +24,6 @@ Sales Enablement Asset    | 68fa02a6ce4308b8e76aa846  | Sales Asset:       | (no
 Trade Media               | 68810314f5a803237b0a34e7  | Trade Media:       | Social Media Account | before_colon            | cd6e7dbcde704aaeb4e90441e2e874de  | (none)
 Video Production          | 6908bd4d42a129af861d8a69  | Video:             | (none)               | (none)                  | 332be8307b9543eebd51c64e0d5ee753  | (none)
 Multichannel Initiative   | (none)                    | Multichannel:      | (none)               | (none)                  | 25a9848d6dca49579803c74ae85234f4  | (none)
-Other                     | (none)                    | Other:             | (none)               | (none)                  | 522a6ced279c43989abaed25d0a5a323  | (none)
 
 channel_extraction_rule: before_colon = split the field value on ":", take text before first colon and trim.
 template_id: the CMP work request form template ID (from Test Instance).
@@ -33,7 +33,7 @@ template_id fallback: if template name lookup fails (e.g. due to a special chara
 ==============================================
 SECTION 2 — CAMPAIGN MAPPING
 ==============================================
-Used by: Agent 2 (Create Task)
+Used by: Agent 4 (Create Task)
 Purpose: Maps CMP campaign name to campaign ID.
 Lookup is case-insensitive. Use the _fallback entry when no match is found.
 
@@ -50,16 +50,13 @@ IP/PULSE & Network (2025)              | 692d985c465fe318491a612c
 RDS Platform Overall (2025)            | 6967c3ee8dbb9dc09d43a0fd
 RDS Property Exposure (2025)           | 6967c4068dbb9dc09d43a95f
 Reinsurance Recalibrated (2025)        | 692d9831465fe318491a062a
-Risk Data Platform (2025)              | 
-Future Ready Resilience (2025)         | 6967c39e8dbb9dc09d432c40
-Advancing Corporate Insurance Together | 63d7fbf49fecf451ac61d6f9
 _fallback                              | 6903266dd19827a999a72490
 
 
 ==============================================
 SECTION 3 — SUPPORTING ACTIVITY MAPPING
 ==============================================
-Used by: Agent 3 (Supporting Activity)
+Used by: Agent 5 (Supporting Activity)
 Purpose: Maps supporting activity type to workflow ID and brief template ID.
 Lookup is case-insensitive. If a type is not found, skip it.
 
@@ -81,13 +78,13 @@ If template_id is (none) or empty: skip the update_task_brief step for this task
 ==============================================
 SECTION 4 — ROUTING RULE USERS
 ==============================================
-Used by: Agent 1 (Process WR)
+Used by: Agent 2 (Validate WR)
 Purpose: User IDs assigned automatically via CMP routing rules.
          These are filtered out when identifying the acceptor from the assignees list.
          Update this list whenever routing rules are added or changed.
 
 To find a user's ID: trigger a WRQ with the routing rule active, then check the
-get_cmp_resource result in the Opal Agent 1 execution log — each entry in the
+get_cmp_resource result in the Opal Agent 2 execution log — each entry in the
 assignees array has id and name.
 
 user_id                    | type       | display_name
@@ -96,8 +93,3 @@ user_id                    | type       | display_name
 684af5da67ed6da2bda2a137   | team       | American Marketing Services Hub
 684af5ea67ed6da2bda2a21f   | team       | EMEA Marketing Services Hub
 (pending — add ASAP)       | team       | APAC Marketing Services Hub
-
-
-
-
-

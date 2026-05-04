@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "specialized",
+  "name": "[ES-CMP][V6] Template Router",
+  "agent_id": "es-cmp-v6-router",
+  "description": "Reads validate agent output and returns exactly one routing keyword: ROUTE_WITH_SA, ROUTE_STANDARD, or ROUTE_BLOCKED. No tools. Passes through all validate fields for downstream agents.",
+  "version": "1.0.0",
+  "is_active": true,
+  "is_deleted": false,
+  "file_urls": [],
+  "creativity": 0,
+  "inference_type": "simple",
+  "parameters": [
+    {
+      "name": "validate_output",
+      "type": "object",
+      "default": null,
+      "required": true,
+      "description": "Full output of the validate agent. Contains proceed_status, routing_key, and all extracted work request fields."
+    }
+  ],
+  "enabled_tools": [],
+  "output": {
+    "type": "json",
+    "description": "",
+    "schema": {
+      "type": "object",
+      "required": ["routing_key"],
+      "properties": {
+        "routing_key": {
+          "type": "string",
+          "enum": ["ROUTE_WITH_SA", "ROUTE_STANDARD", "ROUTE_BLOCKED"],
+          "description": "The routing decision. Exactly one of the three defined values."
+        },
+        "work_request_id": {
+          "type": ["string", "null"]
+        },
+        "task_title": {
+          "type": ["string", "null"]
+        },
+        "campaign": {
+          "type": ["string", "null"]
+        },
+        "due_date": {
+          "type": ["string", "null"]
+        },
+        "channel": {
+          "type": ["string", "null"]
+        },
+        "supporting_activity": {
+          "type": ["string", "null"]
+        },
+        "primary_activity": {
+          "type": ["string", "null"]
+        },
+        "event_manager": {
+          "type": ["string", "null"]
+        },
+        "template_name": {
+          "type": ["string", "null"]
+        },
+        "workflow_id": {
+          "type": ["string", "null"]
+        },
+        "workflow_name": {
+          "type": ["string", "null"]
+        },
+        "request_name": {
+          "type": ["string", "null"]
+        },
+        "accepted_by_id": {
+          "type": ["string", "null"]
+        },
+        "accepted_by_name": {
+          "type": ["string", "null"]
+        },
+        "has_supporting_activity": {
+          "type": "boolean",
+          "description": "Passed through from validate_output unchanged."
+        },
+        "form_fields": {
+          "type": ["object", "null"],
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    }
+  },
+  "agent_metadata": null,
+  "internal_version": 1,
+  "is_enabled_in_chat": false,
+  "prompt_template": "## Role\n\nYou are the Template Router agent for the ES-CMP V6 workflow. Your single job is to read the validate agent output ([[validate_output]]), decide which route to take, and return a structured object containing exactly one routing keyword plus all downstream data fields passed through unchanged.\n\nYou have no tools. You do not call any APIs.\n\n---\n\n## Guardrails\n\n- Never call any tool. You have none.\n- The `routing_key` output value must be exactly one of: `ROUTE_WITH_SA`, `ROUTE_STANDARD`, `ROUTE_BLOCKED`. Nothing else. No explanation, no extra text, no partial strings.\n- Do not recompute any field. All non-routing fields are passed through from `validate_output` unchanged.\n- Never modify `has_supporting_activity` — copy it from input as-is.\n\n---\n\n## Input\n\n`[[validate_output]]` — the full output of the Validate Work Request agent.\n\nKey fields used for routing:\n- `validate_output.proceed_status` — `\"Accepted\"` or `\"Not Accepted\"`\n- `validate_output.routing_key` — `\"ROUTE_WITH_SA\"`, `\"ROUTE_STANDARD\"`, or `null`\n- `validate_output.template_name` — normalised template name\n- `validate_output.supporting_activity` — supporting activity string or null\n- `validate_output.primary_activity` — primary activity string or null (Multichannel Initiative only)\n\n---\n\n## Process\n\n**Step 1 — Safety check**\n\nIf `validate_output.proceed_status` is not exactly `\"Accepted\"`:\n→ return `{ \"routing_key\": \"ROUTE_BLOCKED\" }`. STOP.\n(This is a safety catch. Under normal workflow operation, this step only runs after the validate conditional step has confirmed Accepted.)\n\n**Step 2 — Determine routing_key**\n\nSA-capable template list (extend this list here when new SA-capable templates are added — no other files need changing):\n`[\"Event Request\", \"Multichannel Initiative\"]`\n\nNormalise `validate_output.template_name` (trim, title-case).\n\n- If the normalised template name is exactly `\"Event Request\"` AND `validate_output.supporting_activity` is non-null and non-empty:\n  → `routing_key = \"ROUTE_WITH_SA\"`\n- If the normalised template name is exactly `\"Multichannel Initiative\"` AND (`validate_output.supporting_activity` OR `validate_output.primary_activity` is non-null and non-empty):\n  → `routing_key = \"ROUTE_WITH_SA\"`\n- Otherwise:\n  → use `validate_output.routing_key` from input. If it is `\"ROUTE_WITH_SA\"` but neither condition above was met, override to `\"ROUTE_STANDARD\"`.\n  → Final result: `routing_key = \"ROUTE_STANDARD\"`\n\n**Step 3 — Build and return output**\n\nReturn a JSON object with:\n- `routing_key` = the value determined in Step 2 (`ROUTE_WITH_SA` or `ROUTE_STANDARD`)\n- All other fields copied verbatim from `validate_output`:\n  `work_request_id`, `task_title`, `campaign`, `due_date`, `channel`, `supporting_activity`, `primary_activity`, `event_manager`, `template_name`, `workflow_id`, `workflow_name`, `request_name`, `accepted_by_id`, `accepted_by_name`, `has_supporting_activity`, `form_fields`\n\nDo not include `proceed_status` or `reason` in the output — those fields are not needed downstream.",
+  "conversation_mode": false,
+  "first_prompt_mode": "open",
+  "memory_token_limit": 700000,
+  "evaluation_criteria": null,
+  "system_prompt_template": ""
+}

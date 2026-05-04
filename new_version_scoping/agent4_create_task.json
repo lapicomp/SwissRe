@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "specialized",
+  "name": "[ES-CMP][V6] Create Task from Work Request",
+  "agent_id": "es-cmp-v6-create-task",
+  "description": "Creates the main CMP task from work request data. Campaign lookup from mappings.txt Section 2 (_fallback on no match). Owner = accepted_by_id (omitted if null). Assigns first substep. Does NOT send email — email is handled by the Notify agent (next step). Passes has_supporting_activity through unchanged. Used in both ROUTE_STANDARD and ROUTE_WITH_SA branches.",
+  "version": "1.0.0",
+  "is_active": true,
+  "is_deleted": false,
+  "file_urls": [
+    {
+      "url": "gs://opal-backend-prod-file-contents/UPLOAD_AFTER_IMPORT",
+      "description": "mappings.txt",
+      "type": "text/plain",
+      "preview_url": ""
+    }
+  ],
+  "creativity": 0.1,
+  "inference_type": "simple",
+  "parameters": [
+    {
+      "name": "task_data",
+      "type": "object",
+      "default": null,
+      "required": true,
+      "description": "Output of the router agent. Contains routing_key, work_request_id, task_title, campaign, due_date, workflow_id, workflow_name, template_name, channel, supporting_activity, primary_activity, event_manager, accepted_by_id, accepted_by_name, has_supporting_activity, form_fields."
+    }
+  ],
+  "enabled_tools": [
+    "create_task_from_work_request",
+    "get_cmp_resource",
+    "update_task_substep"
+  ],
+  "output": {
+    "type": "json",
+    "description": "",
+    "schema": {
+      "type": "object",
+      "required": ["execution_status"],
+      "properties": {
+        "execution_status": {
+          "type": "string",
+          "enum": ["Failed", "Task created successfully", "Skipped"]
+        },
+        "reason": {
+          "type": ["string", "null"],
+          "description": "Present when execution_status is Failed or Skipped."
+        },
+        "task_id": {
+          "type": ["string", "null"]
+        },
+        "task_title": {
+          "type": ["string", "null"]
+        },
+        "due_date": {
+          "type": ["string", "null"]
+        },
+        "campaign_id": {
+          "type": ["string", "null"]
+        },
+        "cmp_task_url": {
+          "type": ["string", "null"]
+        },
+        "supporting_activity": {
+          "type": ["string", "null"]
+        },
+        "work_request_id": {
+          "type": ["string", "null"]
+        },
+        "owner_email_address": {
+          "type": ["string", "null"]
+        },
+        "has_supporting_activity": {
+          "type": "boolean",
+          "description": "Passed through from task_data input. Never recomputed. Used by Agent 5 and Notify."
+        },
+        "form_fields": {
+          "type": ["object", "null"],
+          "additionalProperties": { "type": "string" },
+          "description": "Passed through from input for Agent 5 brief population."
+        },
+        "accepted_by_id": {
+          "type": ["string", "null"],
+          "description": "Passed through from input for Agent 5 owner assignment."
+        },
+        "accepted_by_name": {
+          "type": ["string", "null"],
+          "description": "Passed through from input for Agent 5 owner assignment."
+        },
+        "template_name": {
+          "type": ["string", "null"],
+          "description": "Passed through from input unchanged. Used by Agent 5 for template-specific steps."
+        },
+        "primary_activity": {
+          "type": ["string", "null"],
+          "description": "Passed through from input unchanged. Used by Agent 5 for Multichannel Initiative Primary Activity task creation."
+        }
+      }
+    }
+  },
+  "agent_metadata": null,
+  "internal_version": 1,
+  "is_enabled_in_chat": true,
+  "prompt_template": "## Role\n\nYou are the Create Task agent for the ES-CMP V6 workflow. Receive the router output ([[task_data]]), create the main CMP task, assign the first substep, and return output for the Notify agent.\n\nRefer to [[mappings.txt]] for campaign lookups (Section 2 — CAMPAIGN MAPPING). Matching is case-insensitive and trim-normalised.\n\n**CRITICAL: Do NOT call `send_email`. Email is handled exclusively by the Notify agent (next step in the workflow). Never call it, even on failure.**\n\n---\n\n## Guardrails\n\n- Call `create_task_from_work_request` exactly once.\n- Call `get_cmp_resource` exactly once.\n- Call `update_task_substep` at most once (only if accepted_by_name is non-null).\n- Never call `send_email` — it is not an enabled tool and must never be invoked.\n- `has_supporting_activity`, `accepted_by_id`, `accepted_by_name`, and `form_fields` must be passed through from input unchanged — never recomputed.\n- Owner (`owner_id`) must be `accepted_by_id` from input, never the Opal user or any other ID.\n\n---\n\n## Input\n\n`[[task_data]]` — the router agent output. Key fields:\n- `task_data.work_request_id` — CMP work request ID\n- `task_data.task_title` — pre-computed task title\n- `task_data.campaign` — campaign name for lookup\n- `task_data.due_date` — due date string\n- `task_data.workflow_id` — CMP workflow ID\n- `task_data.accepted_by_id` — assignee user ID (may be null)\n- `task_data.accepted_by_name` — assignee display name (may be null)\n- `task_data.has_supporting_activity` — boolean, pass through unchanged\n- `task_data.form_fields` — full form fields object, pass through unchanged\n- `task_data.template_name` — normalised template name, pass through unchanged\n- `task_data.primary_activity` — primary activity string or null, pass through unchanged\n\n---\n\n## Process\n\n**Step 1 — Campaign lookup**\n\nRead `campaign` from `task_data` (trimmed). Look up in [[mappings.txt]] Section 2 (case-insensitive, trim-normalised).\n- Match found → `campaign_id` = mapped value.\n- No match or null/empty → `campaign_id` = value of `_fallback` key.\n- `_fallback` key not present → return `{ \"execution_status\": \"Failed\", \"reason\": \"Campaign not in mapping and no fallback available: <campaign_name>\", \"has_supporting_activity\": <from input>, \"work_request_id\": <from input> }`. STOP. (The Notify agent will send the failure email.)\n\n**Step 2 — Create task**\n\nCall `create_task_from_work_request` exactly once:\n- `work_request_id` = `task_data.work_request_id`\n- `workflow_id` = `task_data.workflow_id`\n- `due_at` = `task_data.due_date`\n- `title` = `task_data.task_title`\n- `campaign_id` = value from Step 1\n- `owner_id` = `task_data.accepted_by_id` — **include ONLY if non-null. If null, omit this field entirely.**\n\nIf `task_id` returned is null:\n→ return `{ \"execution_status\": \"Failed\", \"reason\": \"Task creation returned null task_id\", \"has_supporting_activity\": <from input>, \"work_request_id\": <from input> }`. STOP.\n\n**Step 3 — Fetch task details**\n\nCall `get_cmp_resource` exactly once:\n- `resource_type = \"task\"`\n- `resource_id` = `task_id` from Step 2\n\nExtract: `first_workflow_step_name`, `cmp_task_url`, `owner_email_address`.\nIf `owner_email_address` is null → note and continue. This is NOT a failure.\n\n**Step 4 — Assign substep**\n\nOnly if `task_data.accepted_by_name` is non-null:\nCall `update_task_substep` once:\n- `task_id` = task_id from Step 2\n- `step_name` = `first_workflow_step_name` from Step 3\n- `assignee_type = \"user\"`\n- `assignee_name` = `task_data.accepted_by_name`\n\nIf `accepted_by_name` is null → skip entirely.\n\n**Step 5 — Return success**\n\nReturn the full output object. Pass `has_supporting_activity`, `accepted_by_id`, `accepted_by_name`, `form_fields`, `template_name`, and `primary_activity` through from input unchanged. Omit `reason`.\n\n**On any tool call failure:**\nReturn `{ \"execution_status\": \"Failed\", \"reason\": \"Task creation failed: <brief description>\", \"has_supporting_activity\": <from input>, \"work_request_id\": <from input>, \"owner_email_address\": <if available> }`. The Notify agent will send the failure email.",
+  "conversation_mode": false,
+  "first_prompt_mode": "open",
+  "memory_token_limit": 700000,
+  "evaluation_criteria": null,
+  "system_prompt_template": ""
+}

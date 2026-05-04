@@ -1,0 +1,354 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "workflow",
+  "name": "[ES-CMP][V6] Create Tasks from Work Requests",
+  "description": "V6: 6-agent layered flow. Gate (no tools) → Validate WR (1 API call) → Router (no tools) → Create Task (3 tools, no email) → [SA Tasks (4 tools, no email)] → Notify (send_email once). Mappings from reference file. SA-capable templates routed via ROUTE_WITH_SA. Notify agent handles all email for both paths and both success/failure outcomes.",
+  "version": "",
+  "agent_id": "create-tsk-from-wrq-v6",
+  "objective": "",
+  "plan": "",
+  "is_active": true,
+  "is_deleted": false,
+  "agent_metadata": {
+    "edges": [
+      {
+        "id": "bf2f336f-6396-4d80-bcfa-38b4f741b722",
+        "source": "1f4e9391-e3a0-4058-bfe2-0c0082bdcff9",
+        "target": "1f4e9391-e3a0-4058-bfe2-0c0082bdcff9-condition"
+      },
+      {
+        "id": "26d4c1bc-c810-432f-83ad-08c409df9ebe",
+        "source": "8ad70100-7685-4f08-afc4-2df6a75ded64",
+        "target": "8ad70100-7685-4f08-afc4-2df6a75ded64-condition"
+      },
+      {
+        "id": "459bb959-98fe-4ae3-a908-ced45f4b4b12",
+        "source": "6ad25569-b452-47a3-836c-e93ec329b953",
+        "target": "6ad25569-b452-47a3-836c-e93ec329b953-condition"
+      },
+      {
+        "id": "xy-edge__57f02941-cac5-4c40-b1b3-b81863120dbdsource-right-1f4e9391-e3a0-4058-bfe2-0c0082bdcff9target-body",
+        "source": "57f02941-cac5-4c40-b1b3-b81863120dbd",
+        "target": "1f4e9391-e3a0-4058-bfe2-0c0082bdcff9",
+        "sourceHandle": "source-right",
+        "targetHandle": "target-body"
+      },
+      {
+        "id": "xy-edge__1f4e9391-e3a0-4058-bfe2-0c0082bdcff9-conditionsource-right-8ad70100-7685-4f08-afc4-2df6a75ded64target-body",
+        "source": "1f4e9391-e3a0-4058-bfe2-0c0082bdcff9-condition",
+        "target": "8ad70100-7685-4f08-afc4-2df6a75ded64",
+        "sourceHandle": "source-right",
+        "targetHandle": "target-body"
+      },
+      {
+        "id": "xy-edge__8ad70100-7685-4f08-afc4-2df6a75ded64-conditionsource-right-6ad25569-b452-47a3-836c-e93ec329b953target-body",
+        "source": "8ad70100-7685-4f08-afc4-2df6a75ded64-condition",
+        "target": "6ad25569-b452-47a3-836c-e93ec329b953",
+        "sourceHandle": "source-right",
+        "targetHandle": "target-body"
+      },
+      {
+        "id": "xy-edge__6ad25569-b452-47a3-836c-e93ec329b953-conditionsource-right-77da2049-140d-4aab-a4c8-e5c236c8a19ctarget-body",
+        "source": "6ad25569-b452-47a3-836c-e93ec329b953-condition",
+        "target": "77da2049-140d-4aab-a4c8-e5c236c8a19c",
+        "sourceHandle": "source-right",
+        "targetHandle": "target-body"
+      },
+      {
+        "id": "xy-edge__6ad25569-b452-47a3-836c-e93ec329b953-conditionsource-right-efdf31c7-1653-4403-8d2a-1b341ebd9c95target-body",
+        "source": "6ad25569-b452-47a3-836c-e93ec329b953-condition",
+        "target": "efdf31c7-1653-4403-8d2a-1b341ebd9c95",
+        "sourceHandle": "source-right",
+        "targetHandle": "target-body"
+      },
+      {
+        "id": "xy-edge__77da2049-140d-4aab-a4c8-e5c236c8a19csource-right-40a091a5-bb0f-4ab5-8847-ffc6690da666target-body",
+        "source": "77da2049-140d-4aab-a4c8-e5c236c8a19c",
+        "target": "40a091a5-bb0f-4ab5-8847-ffc6690da666",
+        "sourceHandle": "source-right",
+        "targetHandle": "target-body"
+      },
+      {
+        "id": "xy-edge__efdf31c7-1653-4403-8d2a-1b341ebd9c95source-right-2b0c6f80-abde-4b4c-a281-5ab43640be23target-body",
+        "source": "efdf31c7-1653-4403-8d2a-1b341ebd9c95",
+        "target": "2b0c6f80-abde-4b4c-a281-5ab43640be23",
+        "sourceHandle": "source-right",
+        "targetHandle": "target-body"
+      },
+      {
+        "id": "xy-edge__2b0c6f80-abde-4b4c-a281-5ab43640be23source-right-d0b1c729-714e-4eab-9f3c-b875c86d3bbdtarget-body",
+        "source": "2b0c6f80-abde-4b4c-a281-5ab43640be23",
+        "target": "d0b1c729-714e-4eab-9f3c-b875c86d3bbd",
+        "sourceHandle": "source-right",
+        "targetHandle": "target-body"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "57f02941-cac5-4c40-b1b3-b81863120dbd",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": -120,
+          "y": 0
+        }
+      },
+      {
+        "id": "1f4e9391-e3a0-4058-bfe2-0c0082bdcff9",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 200,
+          "y": 0
+        }
+      },
+      {
+        "id": "1f4e9391-e3a0-4058-bfe2-0c0082bdcff9-condition",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 500,
+          "y": -200
+        }
+      },
+      {
+        "id": "8ad70100-7685-4f08-afc4-2df6a75ded64",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 800,
+          "y": 0
+        }
+      },
+      {
+        "id": "8ad70100-7685-4f08-afc4-2df6a75ded64-condition",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 1100,
+          "y": -200
+        }
+      },
+      {
+        "id": "6ad25569-b452-47a3-836c-e93ec329b953",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 1400,
+          "y": 0
+        }
+      },
+      {
+        "id": "6ad25569-b452-47a3-836c-e93ec329b953-condition",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 1700,
+          "y": -250
+        }
+      },
+      {
+        "id": "77da2049-140d-4aab-a4c8-e5c236c8a19c",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 2050,
+          "y": -450
+        }
+      },
+      {
+        "id": "40a091a5-bb0f-4ab5-8847-ffc6690da666",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 2400,
+          "y": -450
+        }
+      },
+      {
+        "id": "efdf31c7-1653-4403-8d2a-1b341ebd9c95",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 2050,
+          "y": -100
+        }
+      },
+      {
+        "id": "2b0c6f80-abde-4b4c-a281-5ab43640be23",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 2400,
+          "y": -100
+        }
+      },
+      {
+        "id": "d0b1c729-714e-4eab-9f3c-b875c86d3bbd",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 2750,
+          "y": -100
+        }
+      }
+    ]
+  },
+  "internal_version": 1,
+  "steps": [
+    {
+      "step_id": "1f4e9391-e3a0-4058-bfe2-0c0082bdcff9",
+      "step_type": "conditional",
+      "name": "[ES-CMP][V6] Gate",
+      "description": "Hard gate: checks modified_fields contains 'status' (case-sensitive), extracts work_request_id. No tool calls. Returns proceed=true/false.",
+      "evaluator_agent_id": "es-cmp-v6-gate",
+      "parameters_schema": {
+        "webhook_payload": "{{webhook_payload}}"
+      },
+      "conditions": [
+        {
+          "matching_condition": "true",
+          "match_type": "equals",
+          "target_step_id": "8ad70100-7685-4f08-afc4-2df6a75ded64",
+          "priority": 0
+        }
+      ],
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "8ad70100-7685-4f08-afc4-2df6a75ded64",
+      "step_type": "conditional",
+      "name": "[ES-CMP][V6] Validate Work Request",
+      "description": "Fetches WR, validates status=Accepted and template, extracts all routing fields, computes routing_key. One get_cmp_resource call.",
+      "evaluator_agent_id": "es-cmp-v6-validate-wr",
+      "parameters_schema": null,
+      "conditions": [
+        {
+          "matching_condition": "Accepted",
+          "match_type": "equals",
+          "target_step_id": "6ad25569-b452-47a3-836c-e93ec329b953",
+          "priority": 0
+        }
+      ],
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "6ad25569-b452-47a3-836c-e93ec329b953",
+      "step_type": "conditional",
+      "name": "[ES-CMP][V6] Template Router",
+      "description": "Reads validate output and returns ROUTE_STANDARD or ROUTE_WITH_SA. No tool calls. Passes all validate fields through.",
+      "evaluator_agent_id": "es-cmp-v6-router",
+      "parameters_schema": null,
+      "conditions": [
+        {
+          "matching_condition": "ROUTE_STANDARD",
+          "match_type": "equals",
+          "target_step_id": "77da2049-140d-4aab-a4c8-e5c236c8a19c",
+          "priority": 0
+        },
+        {
+          "matching_condition": "ROUTE_WITH_SA",
+          "match_type": "equals",
+          "target_step_id": "efdf31c7-1653-4403-8d2a-1b341ebd9c95",
+          "priority": 1
+        }
+      ],
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "77da2049-140d-4aab-a4c8-e5c236c8a19c",
+      "step_type": "specialized",
+      "name": "[ES-CMP][V6] Create Task (Standard branch)",
+      "description": "Creates main CMP task. Campaign lookup from mappings _fallback. No email. Standard templates (non-SA) branch.",
+      "agent_id": "es-cmp-v6-create-task",
+      "parameters_schema": {},
+      "next_step_id": "40a091a5-bb0f-4ab5-8847-ffc6690da666",
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "40a091a5-bb0f-4ab5-8847-ffc6690da666",
+      "step_type": "specialized",
+      "name": "[ES-CMP][V6] Notify (Standard branch)",
+      "description": "Sends one email notification for the standard task creation path. Handles success and failure.",
+      "agent_id": "es-cmp-v6-notify",
+      "parameters_schema": {},
+      "next_step_id": null,
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "efdf31c7-1653-4403-8d2a-1b341ebd9c95",
+      "step_type": "specialized",
+      "name": "[ES-CMP][V6] Create Task (SA branch)",
+      "description": "Creates main CMP task. SA-capable templates branch (currently: Event Request). No email.",
+      "agent_id": "es-cmp-v6-create-task",
+      "parameters_schema": {},
+      "next_step_id": "2b0c6f80-abde-4b4c-a281-5ab43640be23",
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "2b0c6f80-abde-4b4c-a281-5ab43640be23",
+      "step_type": "specialized",
+      "name": "[ES-CMP][V6] Create Supporting Activity Tasks",
+      "description": "Creates one task per supporting activity value, updates briefs. No email. Passes owner_email_address through for Notify.",
+      "agent_id": "es-cmp-v6-supporting-activity",
+      "parameters_schema": {},
+      "next_step_id": "d0b1c729-714e-4eab-9f3c-b875c86d3bbd",
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "d0b1c729-714e-4eab-9f3c-b875c86d3bbd",
+      "step_type": "specialized",
+      "name": "[ES-CMP][V6] Notify (SA branch)",
+      "description": "Sends one email notification for the SA task creation path. Handles success and failure.",
+      "agent_id": "es-cmp-v6-notify",
+      "parameters_schema": {},
+      "next_step_id": null,
+      "timeout_seconds": 3600
+    }
+  ],
+  "specialized_agents_required": [
+    "es-cmp-v6-gate",
+    "es-cmp-v6-validate-wr",
+    "es-cmp-v6-router",
+    "es-cmp-v6-create-task",
+    "es-cmp-v6-supporting-activity",
+    "es-cmp-v6-notify"
+  ],
+  "triggers": [
+    {
+      "trigger_id": "57f02941-cac5-4c40-b1b3-b81863120dbd",
+      "trigger_type": "webhook",
+      "name": "cmp_work_request_modified_event_v6",
+      "description": "Trigger via webhook on work_request_modified. Subscribe to this event in CMP settings.",
+      "is_active": true,
+      "auth_key": "Csm2vDE6rc",
+      "auth_header_name": "callback-secret",
+      "auth_header_format": "{token}",
+      "payload_content_type": "application/json"
+    }
+  ]
+}

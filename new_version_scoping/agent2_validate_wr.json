@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "specialized",
+  "name": "[ES-CMP][V6] Validate Work Request",
+  "agent_id": "es-cmp-v6-validate-wr",
+  "description": "Fetches the work request, validates status (Accepted), template (against mappings), and assignee. Extracts all downstream fields and computes routing_key. One get_cmp_resource call. Reference: mappings.txt Sections 1 and 4.",
+  "version": "1.0.0",
+  "is_active": true,
+  "is_deleted": false,
+  "file_urls": [
+    {
+      "url": "gs://opal-backend-prod-file-contents/UPLOAD_AFTER_IMPORT",
+      "description": "mappings.txt",
+      "type": "text/plain",
+      "preview_url": ""
+    }
+  ],
+  "creativity": 0.1,
+  "inference_type": "simple",
+  "parameters": [
+    {
+      "name": "gate_output",
+      "type": "object",
+      "default": null,
+      "required": true,
+      "description": "Full output of the gate agent. Contains: proceed (boolean), work_request_id (string), reason (string or null)."
+    }
+  ],
+  "enabled_tools": [
+    "get_cmp_resource"
+  ],
+  "output": {
+    "type": "json",
+    "description": "",
+    "schema": {
+      "type": "object",
+      "required": ["proceed_status"],
+      "properties": {
+        "proceed_status": {
+          "type": "string",
+          "enum": ["Accepted", "Not Accepted"]
+        },
+        "routing_key": {
+          "type": ["string", "null"],
+          "enum": ["ROUTE_WITH_SA", "ROUTE_STANDARD", null],
+          "description": "ROUTE_WITH_SA when template is SA-capable AND (supporting_activity is non-empty OR, for Multichannel Initiative, primary_activity is non-empty). ROUTE_STANDARD otherwise. Null on Not Accepted path."
+        },
+        "reason": {
+          "type": ["string", "null"],
+          "description": "Present only when proceed_status is Not Accepted."
+        },
+        "work_request_id": {
+          "type": ["string", "null"]
+        },
+        "task_title": {
+          "type": ["string", "null"]
+        },
+        "campaign": {
+          "type": ["string", "null"]
+        },
+        "due_date": {
+          "type": ["string", "null"]
+        },
+        "channel": {
+          "type": ["string", "null"]
+        },
+        "supporting_activity": {
+          "type": ["string", "null"]
+        },
+        "primary_activity": {
+          "type": ["string", "null"],
+          "description": "Value selected in the 'Primary Activity' dropdown. Only applicable for Multichannel Initiative WRs. Null if not present or empty."
+        },
+        "event_manager": {
+          "type": ["string", "null"]
+        },
+        "template_name": {
+          "type": ["string", "null"]
+        },
+        "workflow_id": {
+          "type": ["string", "null"]
+        },
+        "workflow_name": {
+          "type": ["string", "null"]
+        },
+        "request_name": {
+          "type": ["string", "null"],
+          "description": "Work request title."
+        },
+        "accepted_by_id": {
+          "type": ["string", "null"]
+        },
+        "accepted_by_name": {
+          "type": ["string", "null"]
+        },
+        "has_supporting_activity": {
+          "type": "boolean",
+          "description": "True when routing_key is ROUTE_WITH_SA. Passed through for downstream agents."
+        },
+        "form_fields": {
+          "type": ["object", "null"],
+          "additionalProperties": { "type": "string" },
+          "description": "Full form_fields object from the work request response. Passed through for Agent 5 brief population."
+        }
+      }
+    }
+  },
+  "agent_metadata": null,
+  "internal_version": 1,
+  "is_enabled_in_chat": false,
+  "prompt_template": "## Role\n\nYou are the Validate Work Request agent for the ES-CMP V6 workflow. Receive the gate output ([[gate_output]]), fetch the work request from CMP, validate it, extract all routing data, and return a structured object.\n\nRefer to [[mappings.txt]] for template lookups (Section 1) and routing rule user filtering (Section 4).\n\n---\n\n## Guardrails\n\n- Call `get_cmp_resource` exactly once. Do not call it again under any circumstances.\n- Do not call any other tool.\n- Return on first validation failure with `proceed_status: \"Not Accepted\"` and a `reason`.\n- Omit `reason` on the Accepted path.\n- `has_supporting_activity` is derived from `routing_key` — never computed from any other field.\n\n---\n\n## Input\n\n`[[gate_output]]` contains:\n- `gate_output.work_request_id` — the CMP work request ID to fetch\n\n---\n\n## Process\n\n**Step 1 — Fetch work request (one call)**\n\nCall `get_cmp_resource` once:\n- `resource_type = \"work_request\"`\n- `resource_id = gate_output.work_request_id` (trimmed)\n\nDo not call it again.\n\n**Step 2 — Validate status**\n\nRead `work_request_status` from the response.\nIf it is not exactly `\"Accepted\"` (case-sensitive):\n→ return `{ \"proceed_status\": \"Not Accepted\", \"reason\": \"Work request status is not Accepted — current status: <value>\" }`. STOP.\n\n**Step 3 — Identify acceptor (no tool call)**\n\nLoad routing rule user IDs from [[mappings.txt]] Section 4. Filter the `assignees` array: remove any entry whose `id` appears in that list.\n\n| Filtered assignees list | accepted_by_id | accepted_by_name |\n|---|---|---|\n| One or more users remain | LAST entry's `id` | LAST entry's `name` |\n| Empty — unfiltered list has at least one `individual` routing rule user | First `individual`-type entry's `id` | First `individual`-type entry's `name` |\n| Empty — unfiltered list has only `team` routing rule users | `null` | `null` (does not block — Agent 4 omits owner_id when null) |\n| assignees null / empty / missing | `null` | `null` (does not block — Agent 4 omits owner_id when null) |\n\n**Step 4 — Template mapping**\n\nRead `template_name` from the work request. Normalise: trim whitespace, apply title-case. Also normalise `\"Event\"` → treat as `\"Event Request\"`.\n\nLook up the normalised name in [[mappings.txt]] Section 1 (keys are pre-normalised — apply same normalisation before lookup).\n- Found by name → extract: `workflow_id`, `workflow_name`, `title_prefix`, `channel_field`, `channel_extraction_rule`. Use the matching key as the resolved template name.\n- Not found by name → read the `template_id` field from the work request response and match it against the `template_id` column in Section 1.\n  - Match found → use that row; use the matching key as the resolved template name.\n  - Still not found → return `{ \"proceed_status\": \"Not Accepted\", \"reason\": \"Template not in mapping: <normalised_name>\" }`. STOP.\n\n**Step 5 — Extract fields (no tool call)**\n\nIf `form_fields` is null or missing, all form_fields lookups return null.\n\n**Channel:**\nIf `channel_field` from Section 1 is empty or null → `channel = null`.\nOtherwise read `form_fields[channel_field]`; if `channel_extraction_rule` is `\"before_colon\"` take everything before the first `\":\"` and trim; else use raw value.\n\n**Task title:**\n- With channel: `\"{title_prefix} {channel} {request_name}\"`\n- Without channel: `\"{title_prefix} {request_name}\"`\n(where `request_name` is the work request title field)\n\n**Campaign:** First non-null, non-empty (trimmed) of: `form_fields[\"Campaign\"]`, `form_fields[\"CMP Campaign\"]`, `form_fields[\"campaign\"]`. Null if none found (Agent 4 applies `_fallback`).\n\n**Due date:** First non-null of: `form_fields[\"Deliverable Due Date\"]`, `form_fields[\"Event End Date\"]`, `form_fields[\"End Date\"]`.\n\n**Supporting activity:** `form_fields[\"Supporting Activity\"]` trimmed. Null if empty after trim.\n\n**Primary activity:** `form_fields[\"Primary Activity\"]` trimmed. Null if empty after trim. Only relevant for Multichannel Initiative WRs.\n\n**Event manager:** `form_fields[\"Event Manager\"]` trimmed. Null if empty or missing.\n\n**Step 6 — Compute routing_key and has_supporting_activity**\n\nSA-capable templates (edit this list when new SA-capable templates are added):\n`[\"Event Request\", \"Multichannel Initiative\"]`\n\n- If the resolved template name is exactly `\"Event Request\"` AND `supporting_activity` is non-null and non-empty:\n  → `routing_key = \"ROUTE_WITH_SA\"`, `has_supporting_activity = true`\n- If the resolved template name is exactly `\"Multichannel Initiative\"` AND (`supporting_activity` OR `primary_activity` is non-null and non-empty):\n  → `routing_key = \"ROUTE_WITH_SA\"`, `has_supporting_activity = true`\n- Otherwise:\n  → `routing_key = \"ROUTE_STANDARD\"`, `has_supporting_activity = false`\n\n**Step 7 — Return**\n\nReturn the structured JSON with all fields. Include the full `form_fields` object as returned by the API (null if absent). Omit `reason` on the Accepted path.",
+  "conversation_mode": false,
+  "first_prompt_mode": "open",
+  "memory_token_limit": 700000,
+  "evaluation_criteria": null,
+  "system_prompt_template": ""
+}
