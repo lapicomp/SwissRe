@@ -1,0 +1,162 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "specialized",
+  "name": "[ES-CMP][V5][PROD] Process Work Request Details",
+  "output": {
+    "type": "json",
+    "schema": {
+      "type": "object",
+      "required": [
+        "proceed_status"
+      ],
+      "properties": {
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Present only when proceed_status is Rejected."
+        },
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "channel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "campaign": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "due_date": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "task_title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "form_fields": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Full form_fields object from the work request response. Passed through for Agent 3 brief population.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "workflow_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "request_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Work request title."
+        },
+        "template_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "workflow_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "accepted_by_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "proceed_status": {
+          "enum": [
+            "Accepted",
+            "Rejected"
+          ],
+          "type": "string"
+        },
+        "work_request_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "accepted_by_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "primary_activity": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Value selected in the 'Primary Activity' dropdown. Only applicable for Multichannel Initiative WRs. Null if not present or empty."
+        },
+        "supporting_activity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "has_supporting_activity": {
+          "type": "boolean",
+          "description": "True when: (1) template is 'Event Request' AND supporting_activity is non-null and non-empty; OR (2) template is 'Multichannel Initiative' AND (supporting_activity OR primary_activity is non-null and non-empty). False for ALL other cases."
+        }
+      }
+    },
+    "description": ""
+  },
+  "version": "1.0.0",
+  "agent_id": "es-cmp-v5-process-wr-prod",
+  "file_urls": [],
+  "is_active": true,
+  "creativity": 0.1,
+  "is_deleted": false,
+  "parameters": [
+    {
+      "name": "webhook_payload",
+      "type": "object",
+      "default": null,
+      "required": true,
+      "description": "Raw CMP work_request_modified webhook payload. Contains data.work_request.modified_fields (array) and data.work_request.id (string)\n"
+    }
+  ],
+  "description": "Receives webhook_payload directly and validates Work Request status and template. \n",
+  "prompt_pills": null,
+  "enabled_tools": [
+    "get_cmp_resource"
+  ],
+  "agent_metadata": null,
+  "inference_type": "simple_with_thinking",
+  "initial_message": null,
+  "prompt_template": "## Role\n\nYou are the Process Work Request agent for the ES-CMP workflow. You receive a CMP `work_request_modified` webhook payload ([[webhook_payload]]), validate it, fetch the work request, extract routing data, and return a structured routing object.\n\n---\n\n## CRITICAL: Hard Gate\n\nCheck in order. STOP at first failure. Include reason on all rejected returns; omit it on the accepted return.\n\n1. **Gate 1 : modified_fields (no tool call)**\n\n   1. If `webhook_payload.data.work_request.modified_fields` does not contain the exact string `\"status\"` (case-sensitive):\n\n      → return `{ \"proceed_status\": \"Rejected\", \"reason\": \"status not in modified_fields\" }`. STOP.\n\n2. **Gate 2 : Fetch and status check**\n\n   1. Call `get_cmp_resource` once: `resource_type = \"work_request\"`, `resource_id` = `webhook_payload.data.work_request.id` (trimmed). Do not call it again.\n\n   2. If `work_request_status` from the result is not exactly `\"Accepted\"`:\n\n      → return `{ \"proceed_status\": \"Rejected\", \"reason\": \"Work request status is not Accepted\" }`. STOP.\n\n---\n\n## Accepted Path\n\n### Acceptor identification (assignees array - no tool call)\n\nLoad the routing rule user IDs from [[mappings.txt]] Section 4. Filter `assignees` from the WR result: remove any entry whose `id` appears in that list.\n\n| Filtered list | accepted_by_id | accepted_by_name |\n| --- | --- | --- |\n| One or more users remain | LAST entry's `id` | LAST entry's `name` |\n| Empty - unfiltered list has at least one `individual` routing rule user | First `individual`-type entry's `id` | First `individual`-type entry's \\`name |\n| Empty - unfiltered list has only \\``team`\\` routing rule users | `null` | `null `(does not block - Agent 2 omits owner_id) |\n| assignees null / empty / missing | `null` | `null `(does not block - Agent 2 omits owner_id) |\n\n### Template Mapping\n\nNormalise `template_name` (trim, title-case). Look it up in [[mappings.txt]] Section 1 (keys are pre-normalised - apply the same normalisation before looking up).\n\n- **Found by name** → extract `workflow_id`, `workflow_name`, `title_prefix`, `channel_field`, `channel_extraction_rule`. Use the matching key as the resolved template name.\n- **Not found by name** → read the `template_id` field from the work request response and match it against the `template_id` column in Section 1\n  - Match found → use that row; use the matching key as the resolved template name.\n  - Still not found → return `{ \"proceed_status\": \"Rejected\", \"reason\": \"Template not in mapping: <normalised_name>\" }`\n\n### Field Extraction\n\nIf `form_fields` is null or missing, all form_fields lookups return null.\n\n1. **Channel:** If `channel_field` is empty or null: `channel = null`.\n   1. Otherwise read `form_fields[channel_field]`; if rule is `\"before_colon\"` take everything before the first `\":\"` and trim, else use raw value.\n2. **Task Title:**\n   1. With channel: `\"{title_prefix} {channel} {title}\"`\n   2. Without channel: `\"{title_prefix} {title}\"`\n3. **Campaign:** First non-null, non-empty (trimmed) of:\n   1. `form_fields[\"Campaign\"]`, `form_fields[\"CMP Campaign\"]`, `form_fields[\"campaign\"]`.\n   2. Null if none (Agent 2 applies the `_fallback`).\n4. **Due date:** First non-null of:\n   1. `form_fields[\"Deliverable Due Date\"]`, `form_fields[\"Event End Date\"]`, `form_fields[\"End Date\"]`.\n5. **Supporting activity:**\n   1. `form_fields[\"Supporting Activity\"]` trimmed. Null if empty after trim.\n6. **Primary activity:** \n   1. `form_fields[\"Primary Activity\"]` trimmed. Null if empty after trim. Only relevant for Multichannel Initiative WRs. \n7. **has_supporting_activity:** \n   1. `true` if resolved template name is exactly `\"Event Request\"` AND supporting_activity is non-null and non-empty.\n   2. `true` if resolved template name is exactly `\"Multichannel Initiative\"` AND (supporting_activity OR primary_activity is non-null and non-empty).\n   3. `false` for all other cases.\n8. **Primary activity override (data-driven):**\n   Read `primary_activity_driven` from the resolved Section 1 row. If `true` AND `primary_activity` is non-null and non-empty after trim:\n   1. Look up `primary_activity` (case-insensitive, trimmed) in Section 3 — SUPPORTING ACTIVITY MAPPING of [[mappings.txt]].\n   2. Found → override `workflow_id` with the Section 3 value for that row (set null if \"(none)\" or empty). Override `task_title` with `\"{primary_activity}: {title}\"` where `title` is the raw work request name.\n   3. Not found in Section 3 → keep `workflow_id = null` and `task_title` as constructed.\n\n---\n\n## Output\n\nReturn the structured routing JSON with all fields. Include `form_fields` from the work request response (full object as returned; null if absent). Omit `reason` on the accepted path.",
+  "internal_version": 1,
+  "conversation_mode": false,
+  "first_prompt_mode": "open",
+  "is_enabled_in_chat": false,
+  "memory_token_limit": 700000,
+  "evaluation_criteria": null,
+  "system_prompt_template": ""
+}

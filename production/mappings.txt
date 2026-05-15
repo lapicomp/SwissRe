@@ -1,0 +1,98 @@
+ES-CMP V5 MAPPINGS REFERENCE — PRODUCTION
+==========================================
+
+All keys are normalised (trimmed, title-cased). Apply the same normalisation before lookup.
+Campaign and activity lookups are case-insensitive (compare lowercased, trimmed values).
+
+==============================================
+SECTION 1 — WORK REQUEST TEMPLATE MAPPING
+==============================================
+Used by: Agent 1 (Process WR)
+Purpose: Maps CMP work request template name to workflow and task title prefix.
+Note: "Event Request" may appear as "Event" in CMP — treat both as the same entry.
+Note: primary_activity_driven = true means the main task workflow and title are derived from the
+      primary_activity field value (looked up in Section 3) rather than from this row's workflow_id.
+      This flag drives data-level routing; no template names are hardcoded in the agent.
+
+Key                       | workflow_id               | title_prefix       | channel_field        | channel_extraction_rule | template_id                       | task_template_id         | primary_activity_driven
+Social Organic            | 685e93e9207f6e746e34d5b7  | Social Organic:    | Social Media Account | before_colon            | b811f6cd459f44debd7843291328a6e2  | (none)                   | false
+Social Paid               | 685ed35727ca4547e80c41a8  | Social Paid:       | Social Media Account | before_colon            | 9ced09b0870241d6b0e087b30dffc9ae  | (none)                   | false
+Web Requests (Marketing)  | 685ecd1c27ca4547e809ac58  | Webpage:           | (none)               | (none)                  | 6940b0bc95ca42b0b79e0e09c1de7b97  | (none)                   | false
+Event Request             | 5e2c7f220b8d133fb85bf6b5  | Event:             | (none)               | (none)                  | 43f2b99e387c45849ec3cf6e9ad824f3  | 68ff8e91d45edb1061ba1d05 | false
+Email Marketing           | 5e20693c96475f735f5a7bd6  | Email:             | (none)               | (none)                  | 5b302517c893421bbd69cbbd7a8fe8ba  | (none)                   | false
+Event Info Capture        | 5e2c7f220b8d133fb85bf6b5  | Event:             | (none)               | (none)                  | 7f9b3e1a9bee42898df07424898062b8  | (none)                   | false
+Graphic Design            | 5e25be695fb3865bb9d8daf6  | Graphic:           | (none)               | (none)                  | 0b6da2a790304ca29bdd3caa0378b128  | (none)                   | false
+Sales Enablement Asset    | (none)                    | Sales Asset:       | (none)               | (none)                  | 177b05ca472546c7ab1de2ae2b90d5a1  | (none)                   | false
+Trade Media               | 69f34aba0fa47c27c92aeb45  | Trade Media:       | Social Media Account | before_colon            | 65c7dfc402e44c1da252d267f2b67217  | (none)                   | false
+Video Production          | (none)                    | Video:             | (none)               | (none)                  | 78afc5edf15145a19dc51ca04e0b61ad  | (none)                   | false
+Multichannel Initiative   | (none)                    | Multichannel:      | (none)               | (none)                  | 47aa09c21297458fb11ff5b5091e1d88  | (none)                   | true
+Other                     | (none)                    | Other:             | (none)               | (none)                  | 5b12a896f91f4a62bb59248e676a54e4  | (none)                   | false
+
+channel_extraction_rule: before_colon = split the field value on ":", take text before first colon and trim.
+template_id: the CMP work request form template ID (from Production instance).
+task_template_id: ID of the task template to apply after task creation (only set for Event Request).
+template_id fallback: if template name lookup fails (e.g. due to a special character prefix in CMP), the agent matches the work request's template_id against the template_id column to identify the correct row.
+
+==============================================
+SECTION 2 — CAMPAIGN MAPPING
+==============================================
+Used by: Agent 2 (Create Task)
+Purpose: Maps CMP campaign name to campaign ID.
+Lookup is case-insensitive. Use the _fallback entry when no match is found.
+
+Campaign Name                          | Campaign ID
+Captives & Fronting (2025)             | 6790fdca9e4c32b8e04bc773
+Event: Baden Baden (2025)              | 6762f68891119bf426ba9f1c
+Event: RVS Monte Carlo (2025)          | 6762f45d91119bf426b9b901
+Financial & Structured Solutions (2025)| 6762f9ca91119bf426bcb82e
+Forward in Life (2026)                 | 698cb44b2895de4429678844
+IP/PULSE & Network (2025)              | 6790fc259e4c32b8e04b7488
+RDS Platform Overall (2025)            | 6797e478dad5066600594bd0
+RDS Property Exposure (2025)           | 6761c1ee70572567a853ce16
+Reinsurance Recalibrated (2025)        | 6762f37c91119bf426b97931
+Future Ready Resilience (2025)         | 6762f3a591119bf426b9817c
+Advancing Corporate Insurance Together | 6797e75bdad50666005ac2a3
+_fallback                              | 6996d29710fd8609c9836d29
+
+
+==============================================
+SECTION 3 — SUPPORTING ACTIVITY MAPPING
+==============================================
+Used by: Agent 3 (Supporting Activity)
+Purpose: Maps supporting activity type to workflow ID and brief template ID.
+Lookup is case-insensitive. If a type is not found, skip it.
+Note: brief_template_id is the task brief form template ID — distinct from the WR form template_id in Section 1.
+
+Activity Type          | workflow_id               | brief_template_id
+Emailing               | 5e20693c96475f735f5a7bd6  | 5b302517c893421bbd69cbbd7a8fe8ba
+Sales Enablement Asset | (none)                    | 177b05ca472546c7ab1de2ae2b90d5a1
+Social Organic         | 685e93e9207f6e746e34d5b7  | b811f6cd459f44debd7843291328a6e2
+Social Paid            | 685ed35727ca4547e80c41a8  | 9ced09b0870241d6b0e087b30dffc9ae
+Trade Media            | 69f34aba0fa47c27c92aeb45  | 48ea0e23b00845168cafd43dc18f6c4c
+Webpage                | 685ecd1c27ca4547e809ac58  | 6940b0bc95ca42b0b79e0e09c1de7b97
+Paid Search            | 63da539973a78d5cd7e99f39  | f432d75c88b24123b8684d9a550c2e4a
+Publication            | 5e0b0b718680d264e17fef08  | (none)
+Paid Display           | 65f83b7456901c130695cd6d  | 2a09ecfbba6f4bedb68fbd2d91d7fc88
+
+If workflow_id is (none) or empty: create the task without a workflow_id.
+If brief_template_id is (none) or empty: skip the update_task_brief step for this task.
+
+
+==============================================
+SECTION 4 — ROUTING RULE USERS
+==============================================
+Used by: Agent 1 (Process WR)
+Purpose: User IDs assigned automatically via CMP routing rules.
+         These are filtered out when identifying the acceptor from the assignees list.
+         Update this list whenever routing rules are added or changed.
+
+To find a user's ID: trigger a WRQ with the routing rule active, then check the
+get_cmp_resource result in the Opal Agent 1 execution log — each entry in the
+assignees array has id and name.
+
+user_id                                         | type       | display_name
+<<REPLACE_user_id: Roman Bobis>>                | individual | Roman Bobis
+<<REPLACE_user_id: Sadhana Acharya>>            | individual | Sadhana Acharya
+<<REPLACE_user_id: American Marketing Services Hub team>> | team | American Marketing Services Hub
+<<REPLACE_user_id: EMEA Marketing Services Hub team>>     | team | EMEA Marketing Services Hub
+<<REPLACE_user_id: APAC Marketing Services Hub team>>     | team | APAC Marketing Services Hub

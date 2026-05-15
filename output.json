@@ -1,0 +1,106 @@
+{
+  "link": "https://cmp.optimizely.com/cloud/taskv3/69f8a9405562e4af5672ff1f",
+  "message": "Used a brief form template filled out by a form-filling AI agent. Brief updated successfully.",
+  "summary": {
+    "total_fields": 24,
+    "total_entered": 13,
+    "total_failed": 0,
+    "total_skipped": 11,
+    "entered_fields": [
+      {
+        "label": "Title",
+        "entry": "Webpage: Multichannel Test 3",
+        "success": true,
+        "attempts": 1
+      },
+      {
+        "label": "Business Unit",
+        "entry": "L&H Re",
+        "success": true,
+        "attempts": 1
+      },
+      {
+        "label": "Region",
+        "entry": "AMERICAS",
+        "success": true,
+        "attempts": 1
+      },
+      {
+        "label": "Campaign",
+        "entry": "Future Ready Resilience (2025)",
+        "success": true,
+        "attempts": 1
+      },
+      {
+        "label": "Description",
+        "entry": "test",
+        "success": true,
+        "attempts": 1
+      },
+      {
+        "label": "Type of Web Request",
+        "entry": "New webpage",
+        "success": true,
+        "attempts": 1
+      },
+      {
+        "label": "Web content type",
+        "entry": "Publication",
+        "success": true,
+        "attempts": 1
+      },
+      {
+        "label": "Web page objective",
+        "entry": "Time spent on the page",
+        "success": true,
+        "attempts": 2,
+        "note": "Required a retry due to validation error on first attempt"
+      },
+      {
+        "label": "Page contacts",
+        "entry": "",
+        "success": true,
+        "attempts": 1
+      },
+      {
+        "label": "Example pages",
+        "entry": "",
+        "success": true,
+        "attempts": 1
+      },
+      {
+        "label": "Deliverable Due Date",
+        "entry": "2026-05-07T10:00:00.000Z",
+        "success": true,
+        "attempts": 1
+      },
+      {
+        "label": "Time sensitivity",
+        "entry": "Fixed Due Date",
+        "success": true,
+        "attempts": 1
+      },
+      {
+        "label": "Add Cost Centre 3",
+        "entry": "No",
+        "success": true,
+        "attempts": 1
+      }
+    ],
+    "failed_fields": [],
+    "skipped_fields": [
+      "Keywords",
+      "Additional information",
+      "Preview URL link",
+      "Live link",
+      "SEO Description",
+      "Link / URL",
+      "Topics",
+      "Competitors' Page URL",
+      "Related Content",
+      "Country",
+      "Link / URL (SEO)"
+    ],
+    "note": "Skipped fields are optional (not required). Success means the agent provided a valid entry or correctly skipped; it does not guarantee CMP will accept the entry at form submission time."
+  }
+}

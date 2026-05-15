@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "specialized",
+  "name": "[Util] Get CMP Form Template",
+  "description": "Fetches a CMP form template by ID and returns the full JSON structure for inspection. Use during template analysis or production mapping setup to compare forms between test and production instances.",
+  "agent_id": "util-get-form-template",
+  "version": "1.0.0",
+  "is_active": true,
+  "is_deleted": false,
+  "file_urls": [],
+  "creativity": 0.0,
+  "inference_type": "simple",
+  "parameters": [
+    {
+      "name": "template_id",
+      "type": "string",
+      "default": null,
+      "required": true,
+      "description": "The CMP form template ID to fetch (e.g. '43f2b99e387c45849ec3cf6e9ad824f3'). Found in CMP admin UI or in mappings.txt template_id column."
+    }
+  ],
+  "enabled_tools": [
+    "get_form_template_by_id"
+  ],
+  "output": {
+    "type": "json",
+    "schema": {
+      "type": "object",
+      "description": "The full form template object as returned by CMP, including all fields, sections, choices, and metadata.",
+      "additionalProperties": true
+    },
+    "description": null
+  },
+  "agent_metadata": null,
+  "internal_version": 1,
+  "is_enabled_in_chat": true,
+  "conversation_mode": false,
+  "first_prompt_mode": "open",
+  "memory_token_limit": 700000,
+  "evaluation_criteria": null,
+  "system_prompt_template": "",
+  "prompt_pills": null,
+  "initial_message": null,
+  "enable_auto_tool_prediction": false,
+  "prompt_template": "## Role\n\nYou are a utility agent that fetches a CMP form template for inspection. Your only job is to call `get_form_template_by_id` with the provided template_id and return the complete response as-is.\n\n## Process\n\n1. Call `get_form_template_by_id` exactly once with `template_id` = [[template_id]] from input (trimmed).\n2. Return the entire tool response verbatim — do not transform, filter, summarize, or restructure any fields. Preserve all field types, labels, choices, sections, `is_required` flags, and metadata exactly as returned.\n3. If the tool call fails or returns null/empty, return `{ \"error\": \"Failed to fetch template\", \"template_id\": \"<input value>\" }`.\n\n## Guardrails\n\n- Exactly one tool call. Do not retry, chain, or call any other tool.\n- Do not add commentary, markdown formatting, or explanation around the JSON output.\n- Output the raw form template JSON only."
+}

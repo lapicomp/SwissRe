@@ -1,0 +1,595 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "workflow",
+  "name": "[ES-CMP][V5] Create Tasks from Work Requests (Linear)",
+  "description": "V5 Linear: Process WR (hard gate on modified_fields) → Create Task → [conditional] Supporting Activity. Mappings from reference file. has_supporting_activity computed by Agent 1, only true for Event Request and Multichannel Initiative with non-empty supporting_activity.",
+  "version": "",
+  "agent_id": "create-tsk-from-wrq-v5-linear",
+  "objective": "",
+  "plan": "",
+  "is_active": true,
+  "is_deleted": false,
+  "agent_metadata": {
+    "edges": [
+      {
+        "id": "48e23b66-4201-44e3-883b-dc9a064db8c5",
+        "source": "6e56832a-d96b-4e09-963f-735efe28e35f",
+        "target": "6e56832a-d96b-4e09-963f-735efe28e35f-condition"
+      },
+      {
+        "id": "66cf9d56-f87b-44a9-b73a-84fc0822eb67",
+        "source": "6e56832a-d96b-4e09-963f-735efe28e35f-condition",
+        "target": "cb1a0260-4edd-442f-afb8-514c47d7cb21"
+      },
+      {
+        "id": "68e63922-9b61-44fb-8d76-a90ed78e160d",
+        "source": "cb1a0260-4edd-442f-afb8-514c47d7cb21",
+        "target": "cb1a0260-4edd-442f-afb8-514c47d7cb21-condition"
+      },
+      {
+        "id": "xy-edge__cb1a0260-4edd-442f-afb8-514c47d7cb21-conditionsource-right-24db286d-a5ec-430f-98e6-368fc09b2462target-body",
+        "source": "cb1a0260-4edd-442f-afb8-514c47d7cb21-condition",
+        "target": "24db286d-a5ec-430f-98e6-368fc09b2462",
+        "sourceHandle": "source-right",
+        "targetHandle": "target-body"
+      },
+      {
+        "id": "xy-edge__22fb9306-ddb2-4bd9-b6a9-e5e1aea3804dsource-right-a153bcc2-866f-4b61-8958-70d9e4d61219target-body",
+        "source": "22fb9306-ddb2-4bd9-b6a9-e5e1aea3804d",
+        "target": "6e56832a-d96b-4e09-963f-735efe28e35f",
+        "sourceHandle": "source-right",
+        "targetHandle": "target-body"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "22fb9306-ddb2-4bd9-b6a9-e5e1aea3804d",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": -120,
+          "y": -150
+        }
+      },
+      {
+        "id": "6e56832a-d96b-4e09-963f-735efe28e35f",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 180,
+          "y": -15
+        }
+      },
+      {
+        "id": "6e56832a-d96b-4e09-963f-735efe28e35f-condition",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 480,
+          "y": -195
+        }
+      },
+      {
+        "id": "cb1a0260-4edd-442f-afb8-514c47d7cb21",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 750,
+          "y": -30
+        }
+      },
+      {
+        "id": "cb1a0260-4edd-442f-afb8-514c47d7cb21-condition",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 1080,
+          "y": -180
+        }
+      },
+      {
+        "id": "24db286d-a5ec-430f-98e6-368fc09b2462",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 1380,
+          "y": -60
+        }
+      }
+    ]
+  },
+  "internal_version": 73,
+  "steps": [
+    {
+      "step_id": "24db286d-a5ec-430f-98e6-368fc09b2462",
+      "step_type": "specialized",
+      "name": "[ES-CMP][V5] Create and Update Tasks for Supporting Activity",
+      "description": "Create one CMP task per supporting-activity value. Links each task to the work request and updates briefs. ",
+      "agent_id": "es-cmp-v5-supporting-activity",
+      "parameters_schema": {},
+      "next_step_id": null,
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "6e56832a-d96b-4e09-963f-735efe28e35f",
+      "step_type": "conditional",
+      "name": "[ES-CMP][V5] Process Work Request Details",
+      "description": "Receives webhook_payload directly. Fetches and validates work request. ",
+      "evaluator_agent_id": "es-cmp-v5-process-wr",
+      "parameters_schema": null,
+      "conditions": [
+        {
+          "matching_condition": "Accepted",
+          "match_type": "equals",
+          "target_step_id": "cb1a0260-4edd-442f-afb8-514c47d7cb21",
+          "priority": 0,
+          "case_sensitive": true
+        }
+      ],
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "cb1a0260-4edd-442f-afb8-514c47d7cb21",
+      "step_type": "conditional",
+      "name": "[ES-CMP][V5] Create and Update Task from Work Request",
+      "description": "Create main CMP task from work request. ",
+      "evaluator_agent_id": "es-cmp-v5-create-task",
+      "parameters_schema": null,
+      "conditions": [
+        {
+          "matching_condition": "true",
+          "match_type": "equals",
+          "target_step_id": "24db286d-a5ec-430f-98e6-368fc09b2462",
+          "priority": 0,
+          "case_sensitive": true
+        }
+      ],
+      "timeout_seconds": 3600
+    }
+  ],
+  "specialized_agents_required": [
+    "es-cmp-v5-supporting-activity",
+    "es-cmp-v5-create-task",
+    "es-cmp-v5-process-wr"
+  ],
+  "triggers": [
+    {
+      "trigger_id": "22fb9306-ddb2-4bd9-b6a9-e5e1aea3804d",
+      "trigger_type": "webhook",
+      "name": "cmp_work_request_modified_event_v5_linear",
+      "description": "Trigger via webhook on work_request_modified.",
+      "is_active": true,
+      "auth_key": "Csm2vDE6rc",
+      "auth_header_name": "callback-secret",
+      "auth_header_format": "{token}",
+      "payload_content_type": "application/json"
+    }
+  ],
+  "specialized_agents": [
+    {
+      "schema_version": "1.0",
+      "agent_type": "specialized",
+      "name": "[ES-CMP][V5] Create and Update Tasks for Supporting Activity",
+      "output": {
+        "type": "json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "execution_status"
+          ],
+          "properties": {
+            "reason": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "task_urls": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "execution_status": {
+              "enum": [
+                "Failed",
+                "Tasks created successfully"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "description": null
+      },
+      "version": "1.0.0",
+      "agent_id": "es-cmp-v5-supporting-activity",
+      "file_urls": [
+        {
+          "url": "gs://opal-backend-prod-file-contents/dd001bbd-3a45-4a45-aaac-85f233146b9b",
+          "size": 6857,
+          "type": "text/plain",
+          "description": "mappings.txt",
+          "preview_url": "https://opal-backend.optimizely.com/v1/file/Z3M6Ly9vcGFsLWJhY2tlbmQtcHJvZC1maWxlLWNvbnRlbnRzL2RkMDAxYmJkLTNhNDUtNGE0NS1hYWFjLTg1ZjIzMzE0NmI5Yg=="
+        }
+      ],
+      "is_active": true,
+      "creativity": 0.1,
+      "is_deleted": false,
+      "parameters": [
+        {
+          "name": "supporting_activity_object",
+          "type": "object",
+          "default": null,
+          "required": true,
+          "description": "Object containing: execution_status, task_id, task_title, campaign_id, cmp_task_url, supporting_activity, primary_activity, template_name, work_request_id, due_date, owner_email_address, has_supporting_activity, form_fields, accepted_by_id, accepted_by_name."
+        }
+      ],
+      "description": "Create one CMP task per supporting-activity value. Links each task to the work request and updates briefs.",
+      "prompt_pills": null,
+      "enabled_tools": [
+        "send_email",
+        "create_task_from_work_request",
+        "get_form_template_by_id",
+        "update_task_brief"
+      ],
+      "agent_metadata": null,
+      "inference_type": "complex",
+      "initial_message": null,
+      "prompt_template": "## Role / Goal\n\nYou are the Create Tasks for Supporting Activity agent for the ES-CMP workflow. You receive the output of the Create Task agent ([[supporting_activity_object]]), create one CMP task per supporting-activity value, populate each task's brief twith WR data using `update_task_brief`, and return all task URLs.\n\nRefer to the attached **mappings.txt** for activity type lookups (Section 3 - SUPPORTING ACTIVITY MAPPING). Matching is case-insensitive and trim-normalised.\n\n## CC list\n\n- [lara.pirdaoud@optimizely.com](mailto:lara.pirdaoud@optimizely.com)\n\n---\n\n## CRITICAL: Guard (no tool calls)\n\nIf `supporting_activity_object.execution_status` is not exactly `\"Task created successfully\"`:\n\n→ return `{ \"execution_status\": \"Failed\", \"reason\": \"Upstream task creation did not complete successfully.\", \"task_urls\": [] }`. STOP.\n\n---\n\n## Process\n\n1. **Build WR summary (no tool call)**\n\n   1. Read `form_fields` from input. If null or missing, set both summaries to `\"\"`.\n\n      Otherwise build two versions (skip any field whose value is null, empty, or starts with an HTML tag e.g. `<h`):\n\n      1. `wr_fields_summary_html` — HTML: `<p><strong>Field Name:</strong> Value</p>` per field.\n      2. `wr_fields_summary_plain` — plain text: `Field Name: Value` per line, no HTML tags.\n\n2. **Parse activities**\n\n   1. Read `supporting_activity` from input. Split on `,`, trim each value, remove empty strings → `activity_list`.\n   2. If `template_name` from input is exactly `\"Multichannel Initiative\"` AND `primary_activity` from input is non-null and non-empty after trim:\n      1. Append `primary_activity` (trimmed) to `activity_list`, unless a value matching it case-insensitively is already present.\n   3. If `activity_list` is empty → return `{ \"execution_status\": \"Tasks created successfully\", \"task_urls\": [] }` immediately. Do not call `send_email`.\n\n3. **Create tasks and update briefs (loop - complete each activity fully before the next)**\n\n   1. **(a)** Normalise and look up in [[mappings.txt]]. Not found → skip.\n   2. **(b)** Extract `workflow_id` and `template_id` from the mapping row.\n   3. **(c)** Call `create_task_from_work_request` once:\n      1. `work_request_id`, `campaign_id`, `due_date` - from input\n      2. `task_name` = `\"{activity_type} {task_title from input}\"`\n      3. `workflow_id` - only if non-empty\n      4. `owner_id` = `accepted_by_id` from input - **only if non-null. Omit entirely if null.**\n      5. Extract `task_id` and `task_url` from the result. If `task_id` is null, go to the failure path immediately.\n   4. **(d)** Only if `template_id` is non-empty: call `get_form_template_by_id` with `template_id`. Record for each field: exact `label`, `type`, `is_required`, and full list of available choices (for selection fields).\n   5. **(e)** Construct `update_summary` using a two-pass approach (see below). Then call `update_task_brief` with `task_id`, `brief_form_template_id` = `template_id`, and `update_summary`.\n   6. **(f)** Append `task_url` to results.\n\n---\n\n## update_summary construction\n\n**Field defaults - apply first during Pass 1 when no WR value maps to the field:**\n\n| Template | Field | Default |\n| --- | --- | --- |\n| Social Paid TB | \"Paid Media Budget\" | `0` |\n| Webpage TB | \"Type of Web Request\" | `\"New webpage\"` (or matched WR value if found) |\n\n**Webpage TB - section pre-filter (run before Pass 1 & 2):**\n\nIf the template is **Webpage TB**, the API returns all form fields flat even though the template uses section-based conditional logic (only one conditional section is visible at a time). Before running Pass 1 and Pass 2, pre-filter the working field list:\n\n1. **Parse sections:** Any field with `\"type\": \"section\"` is a section boundary. All fields between two consecutive section headers belong to the first header's section.\n2. **Active section is always \"New webpage\".** No lookup needed.\n3. **Build the working field list** - include only:\n   1. Global fields (before the first section header)\n   2. Fields in the \"New webpage\" section (parsed from step 1)\n   3. Fields in the \"Timing\" section (parsed from step 1)\n   4. Discard every field in the other conditional sections.\n\n**Pass 1 - Required fields** `is_required: true`):\n\n1. Apply field defaults above if this field matches.\n2. If no default applies, use general rules.\n3. If still blank: selection fields → use placeholder choice (the choice whose name contains \"choose\", e.g. `\"– Choose –\"`) by exact name. Text/text_area → `\"\"`.\n4. Always include every required field - never omit one.\n\n**Pass 2 - Optional fields** `is_required: false`):\n\n1. Apply general rules.\n2. Include the field **only** if a real, non-empty WR value was found. Skip entirely otherwise — no blanks, no placeholders.\n\n**General rules (applied within each pass):**\n\n1. **Title** → `task_name` from step (c).\n2. **richtext** → `wr_fields_summary_html`. If empty, leave blank.\n3. **text_area** with label containing \"Description\", \"Summary\", \"Details\", \"Brief\", \"Body\", \"Overview\", \"Background\", \"Information\", or \"Notes\" → `wr_fields_summary_plain`. If empty, leave blank.\n4. **date** / label contains \"date\" or \"due\" → `due_date` from input for end/due fields; search `wr_fields_summary_plain` for start date if label suggests start; blank if not found.\n5. **selection** (dropdown, radio_button, checkbox, label) → search `wr_fields_summary_plain` for semantically related WR field; find closest case-insensitive match among choices; no match → `\"– Choose –\"` placeholder by exact name.\n6. **other text/text_area** → search `wr_fields_summary_plain` for related value; blank if not found.\n7. **number** → search `wr_fields_summary_plain` for related numeric value; blank if not found.\n8. **Skip:** section headers, readonly fields, type `image` or `video`.\n\nAlways end `update_summary` with: `- For any field not listed above: leave blank.`\n\nClean values only - no annotations or reasoning inside the summary string.\n\n---\n\n## Return\n\n`{ \"execution_status\": \"Tasks created successfully\", \"task_urls\": [...] }`\n\n## Failure path\n\nIf `task_id` is null or any tool call fails: call `send_email` exactly once (CC only if `owner_email_address` is null).\n\nReturn `{ \"execution_status\": \"Failed\", \"reason\": \"Task creation failed during execution.\" }`.",
+      "internal_version": 49,
+      "conversation_mode": false,
+      "first_prompt_mode": "open",
+      "is_enabled_in_chat": false,
+      "memory_token_limit": 700000,
+      "evaluation_criteria": null,
+      "system_prompt_template": "",
+      "enable_auto_tool_prediction": false
+    },
+    {
+      "schema_version": "1.0",
+      "agent_type": "specialized",
+      "name": "[ES-CMP][V5] Create and Update Task from Work Request",
+      "output": {
+        "type": "json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "execution_status"
+          ],
+          "properties": {
+            "reason": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Present when execution_status is Failed or Skipped."
+            },
+            "task_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "due_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "task_title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "campaign_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "form_fields": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Passed through from input (Agent 1 output). Used by Agent 3 for brief population.",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "cmp_task_url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "template_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Passed through from input unchanged. Used by Agent 3 for template-specific steps."
+            },
+            "accepted_by_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of the WR acceptor. Passed through from input for Agent 3 owner assignment."
+            },
+            "work_request_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "accepted_by_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Name of the WR acceptor. Passed through from input for Agent 3 owner assignment."
+            },
+            "execution_status": {
+              "enum": [
+                "Failed",
+                "Task created successfully",
+                "Skipped"
+              ],
+              "type": "string"
+            },
+            "primary_activity": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Passed through from input unchanged. Used by Agent 3 for Multichannel Initiative Primary Activity task creation."
+            },
+            "owner_email_address": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "supporting_activity": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "has_supporting_activity": {
+              "type": "boolean",
+              "description": "Passed through from [[work_request_object]]. Never recomputed. Workflow branches on this."
+            }
+          }
+        },
+        "description": null
+      },
+      "version": "1.0.0",
+      "agent_id": "es-cmp-v5-create-task",
+      "file_urls": [
+        {
+          "url": "gs://opal-backend-prod-file-contents/84951e36-ec45-4953-b4d0-3a46adb3e5cc",
+          "size": 6857,
+          "type": "text/plain",
+          "description": "mappings.txt",
+          "preview_url": "https://opal-backend.optimizely.com/v1/file/Z3M6Ly9vcGFsLWJhY2tlbmQtcHJvZC1maWxlLWNvbnRlbnRzLzg0OTUxZTM2LWVjNDUtNDk1My1iNGQwLTNhNDZhZGIzZTVjYw=="
+        }
+      ],
+      "is_active": true,
+      "creativity": 0.1,
+      "is_deleted": false,
+      "parameters": [
+        {
+          "name": "work_request_object",
+          "type": "object",
+          "default": null,
+          "required": true,
+          "description": "Object containing: proceed_status, work_request_id, request_name, template_name, workflow_id, workflow_name, status, accepted_by_name, accepted_by_id, campaign, supporting_activity, primary_activity, has_supporting_activity, due_date, channel, task_title, form_fields."
+        }
+      ],
+      "description": "Create main CMP task from work request.",
+      "prompt_pills": null,
+      "enabled_tools": [
+        "update_task_substep",
+        "get_cmp_resource",
+        "create_task_from_work_request",
+        "send_email"
+      ],
+      "agent_metadata": null,
+      "inference_type": "complex",
+      "initial_message": null,
+      "prompt_template": "## Role\n\nYou are the Create Task from Work Request agent for the ES-CMP workflow. You receive the processed work request object ([[work_request_object]]), create the main CMP task, assign the substep, and return output for the workflow to branch on.\n\nRefer to the attached [[mappings.txt]] for campaign lookups (Section 2 - CAMPAIGN MAPPING). Matching is case-insensitive and trim-normalised.\n\n## CC list (used in all emails)\n\n- [lara.pirdaoud@optimizely.com](mailto:lara.pirdaoud@optimizely.com)\n\n---\n\n## CRITICAL: Guard (no tool calls)\n\nIf `work_request_object.proceed_status` is not exactly `\"Accepted\"`:\n\n→ return `{ \"execution_status\": \"Skipped\", \"reason\": \"proceed_status is not Accepted — workflow gate did not pass.\", \"has_supporting_activity\": false }`. STOP.\n\n---\n\n## Process\n\n1. **Duplication check**\n\n   1. Call `get_cmp_resource`: `resource_type = \"work_request\"`, `resource_id` = `work_request_id` from input.\n\n   2. If the response has a `tasks` or `linked_tasks` array with any entry whose `workflow_id` matches `workflow_id` from input:\n\n      → return `{ \"execution_status\": \"Skipped\", \"reason\": \"Task already exists for this work request in this workflow.\", \"has_supporting_activity\": <from input> }`. STOP.\n\n   3. If absent, null, or empty → proceed.\n\n2. **Campaign lookup**\n\n   1. Read `campaign` from input. Look up in [[mappings.txt]] Section 2.\n   2. Match → `campaign_id` = mapped value.\n   3. No match or null/empty → `campaign_id` = `_fallback` value.\n\n3. **Create task**\n\n   1. Call `create_task_from_work_request` exactly once:\n      1. `work_request_id`, `workflow_id`, `due_at` (= `due_date`), `title` (= `task_title`), `campaign_id` — all from input or step 2.\n      2. `owner_id` = `accepted_by_id` from input — **only if non-null. If null, omit this field entirely.**\n   2. If `task_id` returned is null → send failure email (CC list only) → return `{ \"execution_status\": \"Failed\", \"reason\": \"Task creation returned null task_id\", \"has_supporting_activity\": <from input> }`.\n\n4. **Fetch task details**\n\n   1. Call `get_cmp_resource`: `resource_type = \"task\"`, `resource_id` = `task_id`.\n   2. Extract: `first_workflow_step_name`, `cmp_task_url`, `owner_email_address`.\n   3. If `owner_email_address` is null → note it and continue. This is NOT a failure.\n\n5. **Assign substep**\n\n   1. Only if `accepted_by_name` from input is non-null: call `update_task_substep` once with `task_id`, `step_name` = `first_workflow_step_name`, `assignee_type = \"user\"`, `assignee_name` = `accepted_by_name`.\n   2. If `accepted_by_name` is null → skip entirely.\n\n---\n\n## Return\n\nReturn structured JSON with all output fields. Pass `has_supporting_activity`, `accepted_by_id`, `accepted_by_name`, `form_fields`, `template_name`, and `primary_activity` through from input unchanged. Omit `reason` on success.\n\n## On any tool call failure\n\nCall `send_email` once (subject `\"Task creation failed in CMP\"`; `recipient_emails` = `owner_email_address` if available, else CC list only).\n\nReturn `{ \"execution_status\": \"Failed\", \"reason\": \"Task creation failed during execution.\", \"has_supporting_activity\": <from input> }`.",
+      "internal_version": 40,
+      "conversation_mode": false,
+      "first_prompt_mode": "open",
+      "is_enabled_in_chat": false,
+      "memory_token_limit": 700000,
+      "evaluation_criteria": null,
+      "system_prompt_template": ""
+    },
+    {
+      "schema_version": "1.0",
+      "agent_type": "specialized",
+      "name": "[ES-CMP][V5] Process Work Request Details",
+      "output": {
+        "type": "json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "proceed_status"
+          ],
+          "properties": {
+            "reason": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Present only when proceed_status is Rejected."
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "channel": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "campaign": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "due_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "task_title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "form_fields": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Full form_fields object from the work request response. Passed through for Agent 3 brief population.",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "workflow_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "request_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Work request title."
+            },
+            "template_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "workflow_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "accepted_by_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "proceed_status": {
+              "enum": [
+                "Accepted",
+                "Rejected"
+              ],
+              "type": "string"
+            },
+            "work_request_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "accepted_by_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "primary_activity": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Value selected in the 'Primary Activity' dropdown. Only applicable for Multichannel Initiative WRs. Null if not present or empty."
+            },
+            "supporting_activity": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "has_supporting_activity": {
+              "type": "boolean",
+              "description": "True when: (1) template is 'Event Request' AND supporting_activity is non-null and non-empty; OR (2) template is 'Multichannel Initiative' AND (supporting_activity OR primary_activity is non-null and non-empty). False for ALL other cases."
+            }
+          }
+        },
+        "description": ""
+      },
+      "version": "1.0.0",
+      "agent_id": "es-cmp-v5-process-wr",
+      "file_urls": [
+        {
+          "url": "gs://opal-backend-prod-file-contents/1c598ba6-29d8-4ddf-b823-231459e64e40",
+          "size": 6857,
+          "type": "text/plain",
+          "description": "mappings.txt",
+          "preview_url": "https://opal-backend.optimizely.com/v1/file/Z3M6Ly9vcGFsLWJhY2tlbmQtcHJvZC1maWxlLWNvbnRlbnRzLzFjNTk4YmE2LTI5ZDgtNGRkZi1iODIzLTIzMTQ1OWU2NGU0MA=="
+        }
+      ],
+      "is_active": true,
+      "creativity": 0.1,
+      "is_deleted": false,
+      "parameters": [
+        {
+          "name": "webhook_payload",
+          "type": "object",
+          "default": null,
+          "required": true,
+          "description": "Raw CMP work_request_modified webhook payload. Contains data.work_request.modified_fields (array) and data.work_request.id (string)\n"
+        }
+      ],
+      "description": "Receives webhook_payload directly and validates Work Request status and template. \n",
+      "prompt_pills": null,
+      "enabled_tools": [
+        "get_cmp_resource"
+      ],
+      "agent_metadata": null,
+      "inference_type": "simple_with_thinking",
+      "initial_message": null,
+      "prompt_template": "## Role\n\nYou are the Process Work Request agent for the ES-CMP workflow. You receive a CMP `work_request_modified` webhook payload ([[webhook_payload]]), validate it, fetch the work request, extract routing data, and return a structured routing object.\n\n---\n\n## CRITICAL: Hard Gate\n\nCheck in order. STOP at first failure. Include reason on all rejected returns; omit it on the accepted return.\n\n1. **Gate 1 : modified_fields (no tool call)**\n\n   1. If `webhook_payload.data.work_request.modified_fields` does not contain the exact string `\"status\"` (case-sensitive):\n\n      → return `{ \"proceed_status\": \"Rejected\", \"reason\": \"status not in modified_fields\" }`. STOP.\n\n2. **Gate 2 : Fetch and status check**\n\n   1. Call `get_cmp_resource` once: `resource_type = \"work_request\"`, `resource_id` = `webhook_payload.data.work_request.id` (trimmed). Do not call it again.\n\n   2. If `work_request_status` from the result is not exactly `\"Accepted\"`:\n\n      → return `{ \"proceed_status\": \"Rejected\", \"reason\": \"Work request status is not Accepted\" }`. STOP.\n\n---\n\n## Accepted Path\n\n### Acceptor identification (assignees array - no tool call)\n\nLoad the routing rule user IDs from [[mappings.txt]] Section 4. Filter `assignees` from the WR result: remove any entry whose `id` appears in that list.\n\n| Filtered list | accepted_by_id | accepted_by_name |\n| --- | --- | --- |\n| One or more users remain | LAST entry's `id` | LAST entry's `name` |\n| Empty - unfiltered list has at least one `individual` routing rule user | First `individual`-type entry's `id` | First `individual`-type entry's \\`name |\n| Empty - unfiltered list has only \\``team`\\` routing rule users | `null` | `null `(does not block - Agent 2 omits owner_id) |\n| assignees null / empty / missing | `null` | `null `(does not block - Agent 2 omits owner_id) |\n\n### Template Mapping\n\nNormalise `template_name` (trim, title-case). Look it up in [[mappings.txt]] Section 1 (keys are pre-normalised - apply the same normalisation before looking up).\n\n- **Found by name** → extract `workflow_id`, `workflow_name`, `title_prefix`, `channel_field`, `channel_extraction_rule`. Use the matching key as the resolved template name.\n- **Not found by name** → read the `template_id` field from the work request response and match it against the `template_id` column in Section 1\n  - Match found → use that row; use the matching key as the resolved template name.\n  - Still not found → return `{ \"proceed_status\": \"Rejected\", \"reason\": \"Template not in mapping: <normalised_name>\" }`\n\n### Field Extraction\n\nIf `form_fields` is null or missing, all form_fields lookups return null.\n\n1. **Channel:** If `channel_field` is empty or null: `channel = null`.\n   1. Otherwise read `form_fields[channel_field]`; if rule is `\"before_colon\"` take everything before the first `\":\"` and trim, else use raw value.\n2. **Task Title:**\n   1. With channel: `\"{title_prefix} {channel} {title}\"`\n   2. Without channel: `\"{title_prefix} {title}\"`\n3. **Campaign:** First non-null, non-empty (trimmed) of:\n   1. `form_fields[\"Campaign\"]`, `form_fields[\"CMP Campaign\"]`, `form_fields[\"campaign\"]`.\n   2. Null if none (Agent 2 applies the `_fallback`).\n4. **Due date:** First non-null of:\n   1. `form_fields[\"Deliverable Due Date\"]`, `form_fields[\"Event End Date\"]`, `form_fields[\"End Date\"]`.\n5. **Supporting activity:**\n   1. `form_fields[\"Supporting Activity\"]` trimmed. Null if empty after trim.\n6. **Primary activity:** \n   1. `form_fields[\"Primary Activity\"]` trimmed. Null if empty after trim. Only relevant for Multichannel Initiative WRs. \n7. **has_supporting_activity:** \n   1. `true` if resolved template name is exactly `\"Event Request\"` AND supporting_activity is non-null and non-empty.\n   2. `true` if resolved template name is exactly `\"Multichannel Initiative\"` AND (supporting_activity OR primary_activity is non-null and non-empty).\n   3. `false` for all other cases.\n\n---\n\n## Output\n\nReturn the structured routing JSON with all fields. Include `form_fields` from the work request response (full object as returned; null if absent). Omit `reason` on the accepted path.",
+      "internal_version": 41,
+      "conversation_mode": false,
+      "first_prompt_mode": "open",
+      "is_enabled_in_chat": false,
+      "memory_token_limit": 700000,
+      "evaluation_criteria": null,
+      "system_prompt_template": ""
+    }
+  ]
+}
