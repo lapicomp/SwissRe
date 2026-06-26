@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "specialized",
+  "name": "[ES-CMP][TEST] Webhook Modified-Fields Filter",
+  "output": {
+    "type": "text",
+    "schema": null,
+    "description": "Single keyword: PROCEED or REJECT."
+  },
+  "version": "1.0.0",
+  "agent_id": "es-cmp-test-webhook-filter",
+  "file_urls": [],
+  "is_active": true,
+  "creativity": 0.3,
+  "is_deleted": false,
+  "parameters": [
+    {
+      "name": "webhook_payload",
+      "type": "object",
+      "default": null,
+      "required": true,
+      "item_type": null,
+      "max_items": null,
+      "min_items": null,
+      "description": "Raw CMP work_request_modified webhook payload. Only data.work_request.modified_fields is read."
+    }
+  ],
+  "description": "Deterministic-style filter run before Agent 1. Inspects webhook_payload.data.work_request.modified_fields and outputs a single keyword (PROCEED or REJECT) consumed by the downstream Condition step.",
+  "prompt_pills": null,
+  "enabled_tools": [],
+  "agent_metadata": {
+    "enable_auto_skill_prediction": false,
+    "enable_auto_skill_prediction_by_tools": false
+  },
+  "inference_type": "rudimentary",
+  "initial_message": null,
+  "prompt_template": "## ROLE\n\nYou are a filter. Your ONLY job is to inspect the webhook payload and output exactly one keyword.\n\n## Input\n\n[[webhook_payload]]\n\n## Process\n\nRule (apply mechanically; do not reason about intent, helpfulness, or downstream effects):\n\n1. Read the array at `webhook_payload.data.work_request.modified_fields`.\n2. If that array contains the exact string `\"status\"` (case-sensitive, exact match — not \"Status\", not \"status_changed\", not any substring): output `PROCEED`.\n3. In every other case (array missing, array empty, array contains other values like `\"assignees\"`, payload malformed): output `REJECT`.\n\n## Output\n\none uppercase keyword on a single line. No quotes. No punctuation. No explanation. No JSON. No surrounding text. Just `PROCEED` or `REJECT`.",
+  "internal_version": 4,
+  "conversation_mode": false,
+  "first_prompt_mode": "open",
+  "is_enabled_in_chat": false,
+  "memory_token_limit": 8000,
+  "evaluation_criteria": null,
+  "system_prompt_template": "",
+  "enable_auto_tool_prediction": false
+}

@@ -1,8 +1,9 @@
 ES-CMP V5 MAPPINGS REFERENCE
 ==============================
 
-All keys are normalised (trimmed, title-cased). Apply the same normalisation before lookup.
-Campaign and activity lookups are case-insensitive (compare lowercased, trimmed values).
+Global lookup rules (apply to all sections unless overridden in-section):
+- Keys are case-insensitive and trim-normalised before matching.
+- Empty / null / unmatched lookups fall through to each consumer agent's Default policy.
 
 ==============================================
 SECTION 1 — WORK REQUEST TEMPLATE MAPPING
@@ -31,14 +32,18 @@ Other                     | (none)                    | Other:             | (no
 channel_extraction_rule: before_colon = split the field value on ":", take text before first colon and trim.
 template_id: the CMP work request form template ID (from Test Instance).
 task_template_id: ID of the task template to apply after task creation (only set for Event Request).
-template_id fallback: if template name lookup fails (e.g. due to a special character prefix in CMP), the agent matches the work request's template_id against the template_id column to identify the correct row.
+Template name lookup is exact-match only (after trim + title-case normalisation). Variants like
+"Social Organic (TL r)" will NOT match "Social Organic" — add a separate row if a variant should be supported.
 
 ==============================================
 SECTION 2 — CAMPAIGN MAPPING
 ==============================================
 Used by: Agent 2 (Create Task)
 Purpose: Maps CMP campaign name to campaign ID.
-Lookup is case-insensitive. Use the _fallback entry when no match is found.
+When direct lookup fails, Agent 2 attempts to extract a CPN ID or campaign name from
+form_fields["Additional Information"] or form_fields["Description"]; if neither yields a
+match, Agent 2 posts a comment on the WRQ requesting the CPN ID and skips task creation.
+No silent fallback campaign exists.
 
 Campaign Name                          | Campaign ID
 [ES CMP] Test Campaign                 | 69228e01dc2727478b5f93ea
@@ -56,7 +61,6 @@ Reinsurance Recalibrated (2025)        | 692d9831465fe318491a062a
 Risk Data Platform (2025)              |
 Future Ready Resilience (2025)         | 6967c39e8dbb9dc09d432c40
 Advancing Corporate Insurance Together | 63d7fbf49fecf451ac61d6f9
-_fallback                              | 6903266dd19827a999a72490
 
 
 ==============================================
@@ -64,7 +68,7 @@ SECTION 3 — SUPPORTING ACTIVITY MAPPING
 ==============================================
 Used by: Agent 3 (Supporting Activity)
 Purpose: Maps supporting activity type to workflow ID and brief template ID.
-Lookup is case-insensitive. If a type is not found, skip it.
+If a type is not found, skip it.
 Note: brief_template_id is the task brief form template ID — distinct from the WR form template_id in Section 1.
 
 Activity Type          | workflow_id               | brief_template_id
@@ -100,3 +104,32 @@ user_id                    | type       | display_name
 684af5da67ed6da2bda2a137   | team       | American Marketing Services Hub
 684af5ea67ed6da2bda2a21f   | team       | EMEA Marketing Services Hub
 (pending — add ASAP)       | team       | APAC Marketing Services Hub
+
+
+==============================================
+SECTION 5 — BUSINESS UNIT MAPPING
+==============================================
+Used by: Agent 3.
+Maps Event Request "BUs" → SA brief "Business Unit".
+Group is SA-only (not present in Event Request).
+
+Event Request BUs | SA brief Business Unit
+L&H Re            | Reinsurance L&H
+P&C Re            | Reinsurance P&C
+CorSo             | CorSo
+RDS               | RDS
+
+
+==============================================
+SECTION 6 — COST CENTRE MAPPING
+==============================================
+Used by: Agent 3 (Trade Media brief only).
+Maps Event Request "Event Cost Centre" → Trade Media "Cost Center".
+KRA5 - RDS option added to Trade Media dropdown by Roman on 2026-05-28.
+
+Event Cost Centre | Trade Media Cost Center
+KO58              | KO58
+KO60              | KO60
+KO61              | KO61
+Other             | Other
+KRA5              | KRA5 - RDS

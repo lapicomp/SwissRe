@@ -1,0 +1,769 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "workflow",
+  "name": "[ES-CMP][TEST] Comment Listener - Resume Task Creation",
+  "description": "TEST Comment Listener: receives `work_request_comment_added` webhooks, validates the comment is a reply with a resolvable CPN ID, fetches the WR, mirrors Agent 1's accepted-path routing, and hands off to the existing Agent 2 (which detects the pre-resolved campaign_id via its Step 0 short-circuit) → Agent 3 if has_supporting_activity.",
+  "version": "",
+  "agent_id": "comment-listener-test",
+  "objective": "",
+  "plan": "",
+  "is_active": true,
+  "is_deleted": false,
+  "agent_metadata": {
+    "edges": [
+      {
+        "id": "edge_agent5_to_agent5cond",
+        "source": "e7d6b4a2-3c1f-4e9b-8a5d-2c7f9b1e6d35",
+        "target": "e7d6b4a2-3c1f-4e9b-8a5d-2c7f9b1e6d35-condition"
+      },
+      {
+        "id": "edge_agent5cond_to_agent2",
+        "source": "e7d6b4a2-3c1f-4e9b-8a5d-2c7f9b1e6d35-condition",
+        "target": "cb1a0260-cmlnr-442f-afb8-514c47d7cb21"
+      },
+      {
+        "id": "edge_agent2_to_agent2cond",
+        "source": "cb1a0260-cmlnr-442f-afb8-514c47d7cb21",
+        "target": "cb1a0260-cmlnr-442f-afb8-514c47d7cb21-condition"
+      },
+      {
+        "id": "edge_agent2cond_to_agent3",
+        "source": "cb1a0260-cmlnr-442f-afb8-514c47d7cb21-condition",
+        "target": "24db286d-cmlnr-430f-98e6-368fc09b2462"
+      },
+      {
+        "id": "edge_agent4_to_agent4cond",
+        "source": "a5e9c4d1-7f8b-4a2e-9c6d-5b3f8e2c1a47",
+        "target": "a5e9c4d1-7f8b-4a2e-9c6d-5b3f8e2c1a47-condition"
+      },
+      {
+        "id": "edge_agent4cond_to_agent5",
+        "source": "a5e9c4d1-7f8b-4a2e-9c6d-5b3f8e2c1a47-condition",
+        "target": "e7d6b4a2-3c1f-4e9b-8a5d-2c7f9b1e6d35"
+      },
+      {
+        "id": "779aa2e5-ef43-46c4-bf09-9630381d9f29",
+        "source": "26d1529f-ae2e-44c3-ac71-f780af7c8c17",
+        "target": "a5e9c4d1-7f8b-4a2e-9c6d-5b3f8e2c1a47"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "26d1529f-ae2e-44c3-ac71-f780af7c8c17",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": -120,
+          "y": -150
+        }
+      },
+      {
+        "id": "e7d6b4a2-3c1f-4e9b-8a5d-2c7f9b1e6d35",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 780,
+          "y": -30
+        }
+      },
+      {
+        "id": "e7d6b4a2-3c1f-4e9b-8a5d-2c7f9b1e6d35-condition",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 1080,
+          "y": -180
+        }
+      },
+      {
+        "id": "cb1a0260-cmlnr-442f-afb8-514c47d7cb21",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 1380,
+          "y": -30
+        }
+      },
+      {
+        "id": "cb1a0260-cmlnr-442f-afb8-514c47d7cb21-condition",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 1680,
+          "y": -180
+        }
+      },
+      {
+        "id": "a5e9c4d1-7f8b-4a2e-9c6d-5b3f8e2c1a47",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 180,
+          "y": -15
+        }
+      },
+      {
+        "id": "a5e9c4d1-7f8b-4a2e-9c6d-5b3f8e2c1a47-condition",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 480,
+          "y": -195
+        }
+      },
+      {
+        "id": "24db286d-cmlnr-430f-98e6-368fc09b2462",
+        "measured": {
+          "width": 248,
+          "height": 108
+        },
+        "position": {
+          "x": 1980,
+          "y": -60
+        }
+      }
+    ]
+  },
+  "internal_version": 11,
+  "steps": [
+    {
+      "step_id": "24db286d-cmlnr-430f-98e6-368fc09b2462",
+      "step_type": "specialized",
+      "name": "[ES-CMP][TESET] Create and Update Tasks for Supporting Activity",
+      "description": "Existing Agent 3 (shared with workflow_linear). Create one CMP task per supporting-activity value. Links each task to the work request and updates briefs.",
+      "agent_id": "es-cmp-test-supporting-activity",
+      "parameters_schema": {},
+      "next_step_id": null,
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "e7d6b4a2-3c1f-4e9b-8a5d-2c7f9b1e6d35",
+      "step_type": "conditional",
+      "name": "[ES-CMP][TEST] Resume Task Creation",
+      "description": "Receives the resolved campaign_id and work_request_id from Validate Comment Reply, fetches the full WR, performs Agent 1's accepted-path routing logic, and outputs the work_request_object with campaign_id pre-set so Agent 2 can skip its own A/B/C campaign lookup.",
+      "evaluator_agent_id": "es-cmp-test-resume-task-creation",
+      "parameters_schema": {},
+      "conditions": [
+        {
+          "matching_condition": "Accepted",
+          "match_type": "equals",
+          "target_step_id": "cb1a0260-cmlnr-442f-afb8-514c47d7cb21",
+          "priority": 0,
+          "case_sensitive": true
+        }
+      ],
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "cb1a0260-cmlnr-442f-afb8-514c47d7cb21",
+      "step_type": "conditional",
+      "name": "[ES-CMP][TEST] Create and Update Task from Work Request",
+      "description": "Existing Agent 2 (shared with workflow_linear). On this branch, work_request_object includes a pre-resolved campaign_id — Agent 2's Step 0 short-circuit skips its own A/B/C lookup.",
+      "evaluator_agent_id": "es-cmp-test-create-task",
+      "parameters_schema": {},
+      "conditions": [
+        {
+          "matching_condition": "true",
+          "match_type": "equals",
+          "target_step_id": "24db286d-cmlnr-430f-98e6-368fc09b2462",
+          "priority": 0,
+          "case_sensitive": true
+        }
+      ],
+      "timeout_seconds": 3600
+    },
+    {
+      "step_id": "a5e9c4d1-7f8b-4a2e-9c6d-5b3f8e2c1a47",
+      "step_type": "conditional",
+      "name": "[ES-CMP][TEST] Validate Comment Reply",
+      "description": "Validates a work_request_comment_added webhook payload. Filters out non-reply comments. Posts a follow-up clarification if the CPN ID is invalid. Routes to Resume Task Creation when a valid CPN ID is resolved.",
+      "evaluator_agent_id": "es-cmp-test-validate-comment-reply",
+      "parameters_schema": {},
+      "conditions": [
+        {
+          "matching_condition": "Resolved",
+          "match_type": "equals",
+          "target_step_id": "e7d6b4a2-3c1f-4e9b-8a5d-2c7f9b1e6d35",
+          "priority": 0,
+          "case_sensitive": true
+        }
+      ],
+      "timeout_seconds": 3600
+    }
+  ],
+  "specialized_agents_required": [
+    "es-cmp-test-supporting-activity",
+    "es-cmp-test-validate-comment-reply",
+    "es-cmp-test-resume-task-creation",
+    "es-cmp-test-create-task"
+  ],
+  "triggers": [
+    {
+      "trigger_id": "26d1529f-ae2e-44c3-ac71-f780af7c8c17",
+      "trigger_type": "webhook",
+      "name": "cmp_wr_comment_added_test",
+      "description": "Trigger via webhook on work_request_comment_added. Fires when any new comment is added to a CMP work request.",
+      "is_active": true,
+      "auth_key": "DcWEMWZnVPTfv4BZdKZt",
+      "auth_header_name": "callback-secret",
+      "auth_header_format": "{token}",
+      "payload_content_type": "application/json"
+    }
+  ],
+  "specialized_agents": [
+    {
+      "schema_version": "1.0",
+      "agent_type": "specialized",
+      "name": "[ES-CMP][TEST] Create and Update Tasks for Supporting Activity",
+      "output": {
+        "type": "json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "execution_status"
+          ],
+          "properties": {
+            "reason": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "task_urls": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "execution_status": {
+              "enum": [
+                "Failed",
+                "Tasks created successfully"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "description": null
+      },
+      "version": "1.0.0",
+      "agent_id": "es-cmp-test-supporting-activity",
+      "file_urls": [
+        {
+          "url": "gs://opal-backend-prod-file-contents/06ff359d-5070-46a1-a185-f612ab553626",
+          "size": 7850,
+          "type": "text/plain",
+          "description": "mappings.txt",
+          "preview_url": "https://opal-backend.optimizely.com/v1/file/Z3M6Ly9vcGFsLWJhY2tlbmQtcHJvZC1maWxlLWNvbnRlbnRzLzA2ZmYzNTlkLTUwNzAtNDZhMS1hMTg1LWY2MTJhYjU1MzYyNg=="
+        }
+      ],
+      "is_active": true,
+      "creativity": 0.1,
+      "is_deleted": false,
+      "parameters": [
+        {
+          "name": "supporting_activity_object",
+          "type": "object",
+          "default": null,
+          "required": true,
+          "item_type": null,
+          "max_items": null,
+          "min_items": null,
+          "description": "Object containing: execution_status, task_id, task_title, request_name, campaign_id, cmp_task_url, supporting_activity, primary_activity, template_name, work_request_id, due_date, owner_email_address, has_supporting_activity, form_fields, accepted_by_id, accepted_by_name."
+        }
+      ],
+      "description": "Create one CMP task per supporting-activity value. Links each task to the work request and updates briefs.",
+      "prompt_pills": null,
+      "enabled_tools": [
+        "send_email",
+        "create_task_from_work_request",
+        "get_form_template_by_id",
+        "update_task_brief"
+      ],
+      "agent_metadata": {
+        "enable_auto_skill_prediction": false,
+        "enable_auto_skill_prediction_by_tools": false
+      },
+      "inference_type": "complex",
+      "initial_message": null,
+      "prompt_template": "## Role / Goal\n\nYou are the Create Tasks for Supporting Activity agent for the ES-CMP workflow. You receive the output of the Create Task agent ([[supporting_activity_object]]), create one CMP task per supporting-activity value, populate each task's brief twith WR data using `update_task_brief`, and return all task URLs.\n\nRefer to the attached **mappings.txt** for activity type lookups (Section 3 - SUPPORTING ACTIVITY MAPPING). Matching is case-insensitive and trim-normalised.\n\n### Email-fail list\n\n- [lara.pirdaoud@optimizely.com](mailto:lara.pirdaoud@optimizely.com)\n\n---\n\n## CRITICAL: Guard (no tool calls)\n\nIf `supporting_activity_object.execution_status` is not exactly `\"Task created successfully\"`:\n\n→ return `{ \"execution_status\": \"Failed\", \"reason\": \"Upstream task creation did not complete successfully.\", \"task_urls\": [] }`. STOP.\n\n---\n\n## Process\n\n1. **Build WR summary (no tool call)**\n\n   1. Read `form_fields` from input. If null or missing, set both summaries to `\"\"`.\n\n      Otherwise build two versions (skip any field whose value is null, empty, or starts with an HTML tag e.g. `<h`):\n\n      1. `wr_fields_summary_html` — HTML: `<p><strong>Field Name:</strong> Value</p>` per field, all concatenated into one string with no literal newlines between tags.\n      2. `wr_fields_summary_plain` — single-line plain text: all fields formatted as `Field Name (Value)` joined by `, `(comma-space). Use parentheses — NOT colons — for the key-value separator. No newlines. Example: `Business Unit (CorSo), Region (AMERICAS), Description (Test), Campaign External (Future Ready Resilience 2025)`. Parentheses are critical: the `update_task_brief` tool uses a form-filling AI that parses `form_instructions` semantically and will extract the value after `Field Name:` if that field name matches a brief template field. Using parentheses prevents it from treating `Description (Test)` as a `Description: Test` assignment, so the full summary is preserved as a single text value.\n\n2. **Parse activities**\n\n   1. Read `supporting_activity` from input. Split on `,`, trim each value, remove empty strings → `activity_list`.\n   2. If `activity_list` is empty → return `{ \"execution_status\": \"Tasks created successfully\", \"task_urls\": [] }` immediately. Do not call `send_email`.\n\n3. **Create tasks and update briefs (loop - complete each activity fully before the next)**\n\n   1. **(a)** Normalise and look up in [[mappings.txt]]. Not found → skip.\n   2. **(b)** Extract `workflow_id` and `brief_template_id` from the mapping row. `brief_template_id` is the task brief form template — distinct from the WR form template_id in Section 1. Always use the value from the current Section 3 row.\n   3. **(c)** Call `create_task_from_work_request` once:\n      1. `work_request_id`, `campaign_id`, `due_date` - from input\n      2. `task_name` = `\"{activity_type}: {request_name from input}\"`\n      3. `workflow_id` - only if non-empty\n      4. `owner_id` = `accepted_by_id` from input - **only if non-null. Omit entirely if null.**\n      5. Extract `task_id` and `task_url` from the result. If `task_id` is null, go to the failure path immediately.\n   4. **(d)** Only if `brief_template_id` is non-empty: call `get_form_template_by_id` with `brief_template_id`. Record for each field: exact `label`, `type`, `is_required`, and full list of available choices (for selection fields).\n   5. **(e)** Construct `update_summary` using a two-pass approach (see below). Then call `update_task_brief` with `task_id`, `brief_form_template_id` = `brief_template_id`, and `update_summary`.\n   6. **(f)** Append `task_url` to results.\n\n---\n\n## update_summary construction\n\n**Field defaults - apply first during Pass 1 when no WR value maps to the field:**\n\n| Template | Field | Default |\n| --- | --- | --- |\n| Social Paid TB | \"Paid Media Budget\" | `0` |\n| Webpage TB | \"Type of Web Request\" | `\"New webpage\"` (or matched WR value if found) |\n\n**Webpage TB - section pre-filter (run before Pass 1 & 2):**\n\nIf the template is **Webpage TB**, the API returns all form fields flat even though the template uses section-based conditional logic (only one conditional section is visible at a time). Before running Pass 1 and Pass 2, pre-filter the working field list:\n\n1. **Parse sections:** Any field with `\"type\": \"section\"` is a section boundary. All fields between two consecutive section headers belong to the first header's section.\n2. **Active section is always \"New webpage\".** No lookup needed.\n3. **Build the working field list** - include only:\n   1. Global fields (before the first section header)\n   2. Fields in the \"New webpage\" section (parsed from step 1)\n   3. Fields in the \"Timing\" section (parsed from step 1)\n   4. Discard every field in the other conditional sections.\n\n**Pass 1 - Required fields** `is_required: true`):\n\n1. Apply field defaults above if this field matches.\n2. If no default applies, use general rules.\n3. If still blank: selection fields → use placeholder choice (the choice whose name contains \"choose\", e.g. `\"– Choose –\"`) by exact name. Text/text_area → `\"\"`.\n4. Always include every required field - never omit one.\n\n**Pass 2 - Optional fields** `is_required: false`):\n\n1. Apply general rules.\n2. Include the field **only** if a real, non-empty WR value was found. Skip entirely otherwise — no blanks, no placeholders.\n\n**General rules (applied within each pass):**\n\n1. **Title** → `task_name` from step (c).\n2. **richtext** → Set to the full `wr_fields_summary_html` string as-is — do NOT extract a single related value, use the entire summary. In Pass 2, this counts as a real value whenever `wr_fields_summary_html` is non-empty. If `wr_fields_summary_html` is empty, leave blank.\n3. **text_area** with label containing \"Description\", \"Summary\", \"Details\", \"Brief\", \"Body\", \"Overview\", \"Background\", \"Information\", or \"Notes\" → Set to the full `wr_fields_summary_plain` string as-is — do NOT extract a single related value, use the entire summary. In Pass 2, this counts as a real value whenever `wr_fields_summary_plain` is non-empty. If `wr_fields_summary_plain` is empty, leave blank.\n4. **date** / label contains \"date\" or \"due\" → `due_date` from input for end/due fields; search `wr_fields_summary_plain` for start date if label suggests start; blank if not found.\n5. **selection** (dropdown, radio_button, checkbox, label) → search `wr_fields_summary_plain` for semantically related WR field; find closest case-insensitive match among choices; no match → `\"– Choose –\"` placeholder by exact name.\n6. **other text/text_area** → search `wr_fields_summary_plain` for related value; blank if not found.\n7. **number** → search `wr_fields_summary_plain` for related numeric value; blank if not found.\n8. **Skip:** section headers, readonly fields, type `image` or `video`.\n\nAlways end `update_summary` with: `- For any field not listed above: leave blank.`\n\nClean values only - no annotations or reasoning inside the summary string.\n\n---\n\n## Return\n\n`{ \"execution_status\": \"Tasks created successfully\", \"task_urls\": [...] }` Do not send email.\n\n## Failure path\n\nIf `task_id` is null or any tool call fails: call `send_email` exactly once to Email-fail list.\n\nReturn `{ \"execution_status\": \"Failed\", \"reason\": \"Task creation failed during execution.\" }`.",
+      "internal_version": 66,
+      "conversation_mode": false,
+      "first_prompt_mode": "open",
+      "is_enabled_in_chat": false,
+      "memory_token_limit": 700000,
+      "evaluation_criteria": null,
+      "system_prompt_template": "",
+      "enable_auto_tool_prediction": false
+    },
+    {
+      "schema_version": "1.0",
+      "agent_type": "specialized",
+      "name": "[ES-CMP][TEST] Validate Comment Reply",
+      "output": {
+        "type": "json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "proceed_status"
+          ],
+          "properties": {
+            "reason": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Present on Skipped only."
+            },
+            "proceed_status": {
+              "enum": [
+                "Resolved",
+                "Skipped"
+              ],
+              "type": "string"
+            },
+            "work_request_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Populated only on Resolved."
+            },
+            "resolved_campaign_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Populated only on Resolved. The 24-char hex CPN ID extracted from the reply and validated against Section 2."
+            }
+          }
+        },
+        "description": ""
+      },
+      "version": "1.0.0",
+      "agent_id": "es-cmp-test-validate-comment-reply",
+      "file_urls": [
+        {
+          "url": "gs://opal-backend-prod-file-contents/2abd08bf-7d19-443f-8a39-2e199dbcd690",
+          "size": 7850,
+          "type": "text/plain",
+          "description": "mappings.txt",
+          "preview_url": "https://opal-backend.optimizely.com/v1/file/Z3M6Ly9vcGFsLWJhY2tlbmQtcHJvZC1maWxlLWNvbnRlbnRzLzJhYmQwOGJmLTdkMTktNDQzZi04YTM5LTJlMTk5ZGJjZDY5MA=="
+        }
+      ],
+      "is_active": true,
+      "creativity": 0.3,
+      "is_deleted": false,
+      "parameters": [
+        {
+          "name": "webhook_payload",
+          "type": "object",
+          "default": null,
+          "required": true,
+          "item_type": null,
+          "max_items": null,
+          "min_items": null,
+          "description": "Raw CMP work_request_comment_added webhook payload. Contains data.comment_for.id (work request id) and data.comment.id (new comment id)."
+        }
+      ],
+      "description": "Validates a CMP work_request_comment_added webhook payload. Fetches the work request, gates on whether the WR has any prior bot comment, filters out bot comments, and scans remaining user comments for a CPN ID. Validates against mappings.txt Section 2. Returns Resolved with work_request_id and resolved_campaign_id on match. Returns Skipped silently in all other cases — does NOT post any comments, eliminating webhook re-trigger loops.",
+      "prompt_pills": null,
+      "enabled_tools": [
+        "get_cmp_resource"
+      ],
+      "agent_metadata": {
+        "enable_auto_skill_prediction": false,
+        "enable_auto_skill_prediction_by_tools": false
+      },
+      "inference_type": "simple_with_thinking",
+      "initial_message": null,
+      "prompt_template": "## Role\n\nYou are the Validate Comment Reply agent for the ES-CMP workflow. You receive a CMP `work_request_comment_added` webhook payload ([[webhook_payload]]). The webhook fires for **every** new comment on **every** WR in the connected CMP instance — including WRs unrelated to this automation. Your job is to:\n\n1. Fetch the work request (which returns its comments in the response).\n2. **Gate:** check whether this WR is managed by our automation (has any prior bot-posted comment). If not, exit silently.\n3. Filter out the bot's own clarification posts.\n4. Scan the remaining (user) comments for a 24-char hex CPN ID.\n5. Validate the CPN ID against Section 2 and return the resolved campaign_id, or skip silently if it doesn't match.\n\nRefer to the attached [[mappings.txt]] for campaign ID validation (Section 2 — CAMPAIGN MAPPING).\n\n---\n\n## Process\n\n1. **Fetch the work request**\n\n   1. Read `webhook_payload.data.comment_for.id` (the work request's id).\n\n   2. Call `get_cmp_resource` once with:\n\n      - `resource_type` = `\"work_request\"`\n      - `resource_id` = the work_request_id from step 1.1 (trimmed)\n\n2. **Extract comments from the response (no tool call)**\n\n   1. In the response `content` markdown, find the `## Comments` section.\n\n   2. Each comment block looks like and appear newest-first in the response:\n\n      ```\n      ### Comment by [Author] ([timestamp])\n      <p>[comment body HTML]</p>\n      ```\n\n   3. For each block, extract the plain-text body by stripping the HTML tags.\n\n3. **\"Managed by our automation\" GATE (no tool call)**\n\n   Determine whether the WR has at least one bot-posted comment. A comment is a bot comment if its plain-text body (trimmed):\n\n   1. **Primary marker:** starts with `🤖`(robot emoji + space), OR\n   2. **Legacy fallback** (for older test WRs whose bot comments predate the emoji prefix) is exactly one of these strings (case-insensitive):\n      - `Campaign not identified – please copy here the CPN ID of the target Campaign for this Request and Tasks I will create for you.`\n   3. If **no** comment on the WR matches either criterion → this WR is not managed by our automation.\n      1. Return `{ \"proceed_status\": \"Skipped\", \"reason\": \"WR has no prior bot interaction; not managed by ES-CMP automation.\" }`. STOP. Do not call any further tools.\n   4. If at least one bot comment exists, build a `bot_comment_set` of all such comments and continue to step 4.\n\n4. **CPN ID extraction (no tool call)**\n\n   From the comments list, **exclude** all bot comments (`bot_comment_set` from step 3). Among the remaining (user) comments, scan in order (newest first). For each user comment, search the plain-text body for any 24-character hexadecimal substring (MongoDB ObjectId pattern — `[a-f0-9]{24}`, case-insensitive). Take the **first** match found across all user comments.\n\n   1. **No 24-char hex found** in any user comment → return `{ \"proceed_status\": \"Skipped\", \"reason\": \"No CPN ID found in any user comment on this WR.\" }`. STOP. Do not call any further tools.\n   2. **Found** → continue with the extracted hex string as `candidate_campaign_id`.\n\n5. **Section 2 validation**\n\n   Check whether `candidate_campaign_id` (lowercased) appears as a value in any row of [[mappings.txt]] Section 2.\n\n   1. **Match found** → return:\n\n      ```json\n      {\n        \"proceed_status\": \"Resolved\",\n        \"work_request_id\": \"<webhook_payload.data.comment_for.id>\",\n        \"resolved_campaign_id\": \"<candidate_campaign_id>\"\n      }\n      ```\n\n   2. **No match** → return `{ \"proceed_status\": \"Skipped\", \"reason\": \"CPN ID not found in Section 2 mapping (invalid CPN).\" }`. STOP.\n\n---\n\n## Guardrails\n\n- **Tool call limits:** `get_cmp_resource` exactly once with `resource_type = \"work_request\"`. **No other tool calls under any circumstance.**\n- **Invalid CPN handling:** silent skip. The user discovers the invalid CPN by the absence of task creation in CMP and can reply again with a corrected ID.\n- **Idempotency:** if the same CPN ID was already resolved on a previous webhook (e.g., the user added more comments after the CPN), Agent 2's downstream duplication check prevents duplicate task creation.",
+      "internal_version": 10,
+      "conversation_mode": false,
+      "first_prompt_mode": "open",
+      "is_enabled_in_chat": false,
+      "memory_token_limit": 700000,
+      "evaluation_criteria": null,
+      "system_prompt_template": "",
+      "enable_auto_tool_prediction": false
+    },
+    {
+      "schema_version": "1.0",
+      "agent_type": "specialized",
+      "name": "[ES-CMP][TEST] Resume Task Creation",
+      "output": {
+        "type": "json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "proceed_status"
+          ],
+          "properties": {
+            "reason": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Present only when proceed_status is Rejected."
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "channel": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "campaign": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Raw campaign name from form_fields (may be null/empty if user picked 'Other'). Agent 2 ignores this when campaign_id is set."
+            },
+            "due_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "task_title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "campaign_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Pre-resolved from the comment-reply path (passed from Validate Comment Reply). Tells Agent 2 to skip its own A/B/C campaign lookup."
+            },
+            "form_fields": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Full form_fields object from the work request response. Passed through for Agent 3 brief population.",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "workflow_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "request_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Work request title."
+            },
+            "template_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "workflow_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "accepted_by_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "proceed_status": {
+              "enum": [
+                "Accepted",
+                "Rejected"
+              ],
+              "type": "string"
+            },
+            "work_request_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "accepted_by_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "primary_activity": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Value selected in the 'Primary Activity' dropdown. Only applicable for Multichannel Initiative WRs. Null if not present or empty."
+            },
+            "supporting_activity": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "has_supporting_activity": {
+              "type": "boolean",
+              "description": "True when: (1) template is 'Event Request' AND supporting_activity is non-null and non-empty; OR (2) template is 'Multichannel Initiative' AND (supporting_activity OR primary_activity is non-null and non-empty). False for ALL other cases."
+            }
+          }
+        },
+        "description": ""
+      },
+      "version": "1.0.0",
+      "agent_id": "es-cmp-test-resume-task-creation",
+      "file_urls": [
+        {
+          "url": "gs://opal-backend-prod-file-contents/94137fec-4607-4e73-b8ec-bc04c7b985a0",
+          "size": 7851,
+          "type": "text/plain",
+          "description": "mappings.txt",
+          "preview_url": "https://opal-backend.optimizely.com/v1/file/Z3M6Ly9vcGFsLWJhY2tlbmQtcHJvZC1maWxlLWNvbnRlbnRzLzk0MTM3ZmVjLTQ2MDctNGU3My1iOGVjLWJjMDRjN2I5ODVhMA=="
+        }
+      ],
+      "is_active": true,
+      "creativity": 0.3,
+      "is_deleted": false,
+      "parameters": [
+        {
+          "name": "validated_comment_object",
+          "type": "object",
+          "default": null,
+          "required": true,
+          "item_type": null,
+          "max_items": null,
+          "min_items": null,
+          "description": "Output of the Validate Comment Reply agent. Contains: proceed_status (Resolved/Skipped), work_request_id, resolved_campaign_id, reason."
+        }
+      ],
+      "description": "Receives a resolved campaign_id and work_request_id from the Validate Comment Reply agent. Fetches the full work request, performs the same routing logic as Agent 1's Accepted Path (template lookup, field extraction, has_supporting_activity, primary_activity override), and outputs the work_request_object with campaign_id pre-set. Agent 2 picks up from here and skips its own campaign lookup.",
+      "prompt_pills": null,
+      "enabled_tools": [
+        "get_cmp_resource"
+      ],
+      "agent_metadata": {
+        "enable_auto_skill_prediction": false,
+        "enable_auto_skill_prediction_by_tools": false
+      },
+      "inference_type": "simple_with_thinking",
+      "initial_message": null,
+      "prompt_template": "## Role\n\nYou are the Resume Task Creation agent for the ES-CMP workflow. You receive [[validated_comment_object]] containing `work_request_id` and `resolved_campaign_id` from the Validate Comment Reply agent. You fetch the full work request, perform the same routing logic as Agent 1's Accepted Path, and output a routing object with `campaign_id` pre-set so Agent 2 can skip its own campaign lookup.\n\nRefer to the attached [[mappings.txt]] for template (Section 1), routing rule users (Section 4), and supporting activity (Section 3 — used by the primary_activity override) lookups.\n\n---\n\n## CRITICAL: Status Gate\n\n1. **Fetch the work request**\n\n   1. Read `validated_comment_object.work_request_id` and `validated_comment_object.resolved_campaign_id` from input.\n\n   2. Call `get_cmp_resource` once: `resource_type = \"work_request\"`, `resource_id` = `work_request_id` (trimmed). Do not call it again.\n\n2. **Status check**\n\n   1. If `work_request_status` from the result is not exactly `\"Accepted\"`:\n\n      → return `{ \"proceed_status\": \"Rejected\", \"reason\": \"Work request status is no longer acepted\" }`. STOP.\n\n---\n\n## Accepted Path\n\n### Acceptor identification (assignees array - no tool call)\n\nLoad the routing rule user IDs from [[mappings.txt]] Section 4. Filter `assignees` from the WR result: remove any entry whose `id` appears in that list.\n\n| Filtered list | accepted_by_id | accepted_by_name |\n| --- | --- | --- |\n| One or more users remain | LAST entry's `id` | LAST entry's `name` |\n| Empty - unfiltered list has at least one `individual` routing rule user | First `individual`-type entry's `id` | First `individual`-type entry's `name` |\n| Empty - unfiltered list has only `team` routing rule users | `null` | `null` (does not block - Agent 2 omits owner_id) |\n| assignees null / empty / missing | `null` | `null` (does not block - Agent 2 omits owner_id) |\n\n### Template Mapping\n\nNormalise `template_name` (trim, title-case). Look it up in [[mappings.txt]] Section 1 (keys are pre-normalised - apply the same normalisation before looking up).\n\n- **Found by name** → extract `workflow_id`, `workflow_name`, `title_prefix`, `channel_field`, `channel_extraction_rule`. Use the matching key as the resolved template name.\n- **Not found by name** → read the `template_id` field from the work request response and match it against the `template_id` column in Section 1\n  - Match found → use that row; use the matching key as the resolved template name.\n  - Still not found → return `{ \"proceed_status\": \"Rejected\", \"reason\": \"Template not in mapping: <normalised_name>\" }`.\n\n### Field Extraction\n\nIf `form_fields` is null or missing, all form_fields lookups return null.\n\n1. **Channel:** If `channel_field` is empty or null: `channel = null`.\n   1. Otherwise read `form_fields[channel_field]`; if rule is `\"before_colon\"` take everything before the first `\":\"` and trim, else use raw value.\n2. **Task Title:**\n   1. With channel: `\"{title_prefix} {channel} {title}\"`\n   2. Without channel: `\"{title_prefix} {title}\"`\n3. **Campaign:** Pass through `campaign` as the first non-null, non-empty (trimmed) of:\n   1.  `form_fields[\"Campaign\"]`, `form_fields[\"CMP Campaign\"]`, `form_fields[\"campaign\"]`. \n   2. May be null if the user originally picked \"Other\". Agent 2 ignores this when `campaign_id` is set.\n4. **Campaign ID (PRE-RESOLVED):** Set `campaign_id` = `resolved_campaign_id` from input. \n   1. This is the value that tells Agent 2 to skip its own A/B/C campaign lookup.\n5. **Due date:** First non-null of: \n   1. `form_fields[\"Deliverable Due Date\"]`, `form_fields[\"Event End Date\"]`, `form_fields[\"End Date\"]`.\n   2. Any form field that contains the string `\"Due Date\"` or `\"End Date\"`\n6. **Supporting activity:** \n   1. `form_fields[\"Supporting Activity\"]` trimmed. Null if empty after trim.\n7. **Primary activity:** \n   1. `form_fields[\"Primary Activity\"]` trimmed. Null if empty after trim. \n   2. Only relevant for Multichannel Initiative WRs.\n8. **has_supporting_activity:**\n   1. `true` if resolved template name is exactly `\"Event Request\"` AND supporting_activity is non-null and non-empty.\n   2. `true` if resolved template name is exactly `\"Multichannel Initiative\"` AND (supporting_activity OR primary_activity is non-null and non-empty).\n   3. `false` for all other cases.\n9. **Primary activity override (data-driven)**:Read `primary_activity_driven` from the resolved Section 1 row. If `true` AND `primary_activity` is non-null and non-empty after trim:\n   1. Look up `primary_activity` (case-insensitive, trimmed) in Section 3 — SUPPORTING ACTIVITY MAPPING of [[mappings.txt]].\n   2. Found → override `workflow_id` with the Section 3 value for that row (set null if \"(none)\" or empty). Override `task_title` with `\"{primary_activity}: {title}\"` where `title` is the raw work request name.\n   3. Not found in Section 3 → keep `workflow_id = null` and `task_title` as constructed.\n\n---\n\n## Output\n\nReturn the structured routing JSON with all fields. Include `form_fields` from the work request response (full object as returned; null if absent). Set `campaign_id` to `resolved_campaign_id` from input. Omit `reason` on the accepted path.\n\n## Guardrails\n\n- **Tool call limits:** `get_cmp_resource` exactly once.\n- **Do not perform campaign lookup against Section 2.** The campaign_id is already resolved by the upstream Validate Comment Reply agent. Just pass it through.\n- **Do not create tasks, send emails, or post comments.** Those are downstream agents' responsibilities.",
+      "internal_version": 5,
+      "conversation_mode": false,
+      "first_prompt_mode": "open",
+      "is_enabled_in_chat": false,
+      "memory_token_limit": 700000,
+      "evaluation_criteria": null,
+      "system_prompt_template": "",
+      "enable_auto_tool_prediction": false
+    },
+    {
+      "schema_version": "1.0",
+      "agent_type": "specialized",
+      "name": "[ES-CMP][TEST] Create and Update Task from Work Request",
+      "output": {
+        "type": "json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "execution_status"
+          ],
+          "properties": {
+            "reason": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Present when execution_status is Failed or Skipped."
+            },
+            "task_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "due_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "task_title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "campaign_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "form_fields": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Passed through from input (Agent 1 output). Used by Agent 3 for brief population.",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "cmp_task_url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "request_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Raw work request name from Agent 1, passed through for Agent 3 task naming."
+            },
+            "template_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Passed through from input unchanged. Used by Agent 3 for template-specific steps."
+            },
+            "accepted_by_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ID of the WR acceptor. Passed through from input for Agent 3 owner assignment."
+            },
+            "work_request_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "accepted_by_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Name of the WR acceptor. Passed through from input for Agent 3 owner assignment."
+            },
+            "execution_status": {
+              "enum": [
+                "Failed",
+                "Task created successfully",
+                "Skipped"
+              ],
+              "type": "string"
+            },
+            "primary_activity": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Passed through from input unchanged. Used by Agent 3 for Multichannel Initiative Primary Activity task creation."
+            },
+            "owner_email_address": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "supporting_activity": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "has_supporting_activity": {
+              "type": "boolean",
+              "description": "Passed through from [[work_request_object]]. Never recomputed. Workflow branches on this."
+            }
+          }
+        },
+        "description": null
+      },
+      "version": "1.0.0",
+      "agent_id": "es-cmp-test-create-task",
+      "file_urls": [
+        {
+          "url": "gs://opal-backend-prod-file-contents/2f1d4539-0a55-4c72-8d69-d33830114abd",
+          "size": 7850,
+          "type": "text/plain",
+          "description": "mappings.txt",
+          "preview_url": "https://opal-backend.optimizely.com/v1/file/Z3M6Ly9vcGFsLWJhY2tlbmQtcHJvZC1maWxlLWNvbnRlbnRzLzJmMWQ0NTM5LTBhNTUtNGM3Mi04ZDY5LWQzMzgzMDExNGFiZA=="
+        }
+      ],
+      "is_active": true,
+      "creativity": 0.1,
+      "is_deleted": false,
+      "parameters": [
+        {
+          "name": "work_request_object",
+          "type": "object",
+          "default": null,
+          "required": true,
+          "item_type": null,
+          "max_items": null,
+          "min_items": null,
+          "description": "Object containing: proceed_status, work_request_id, request_name, template_name, workflow_id, workflow_name, status, accepted_by_name, accepted_by_id, campaign, campaign_id (optional — pre-resolved when entering from the comment-listener branch; tells Agent 2 to skip its own A/B/C campaign lookup), supporting_activity, primary_activity, has_supporting_activity, due_date, channel, task_title, form_fields."
+        }
+      ],
+      "description": "Create main CMP task from work request.",
+      "prompt_pills": null,
+      "enabled_tools": [
+        "update_task_substep",
+        "get_cmp_resource",
+        "create_task_from_work_request",
+        "send_email",
+        "add_comment_on_cmp_work_request"
+      ],
+      "agent_metadata": {
+        "enable_auto_skill_prediction": false,
+        "enable_auto_skill_prediction_by_tools": false
+      },
+      "inference_type": "complex",
+      "initial_message": null,
+      "prompt_template": "## Role\n\nYou are the Create Task from Work Request agent for the ES-CMP workflow. You receive the processed work request object ([[work_request_object]]), create the main CMP task, assign the substep, and return output for the workflow to branch on.\n\nRefer to the attached [[mappings.txt]] for campaign lookups (Section 2 - CAMPAIGN MAPPING). Matching is case-insensitive and trim-normalised.\n\n#### Email-fail list\n\n- [lara.pirdaoud@optimizely.com](mailto:lara.pirdaoud@optimizely.com)\n\n---\n\n## Process\n\n1. **Duplication check**\n\n   1. Call `get_cmp_resource`: `resource_type = \"work_request\"`, `resource_id` = `work_request_id` from input.\n\n   2. If the response has a `tasks` or `linked_tasks` array with any entry whose `workflow_id` matches `workflow_id` from input:\n\n      → return `{ \"execution_status\": \"Skipped\", \"reason\": \"Task already exists for this work request in this workflow.\", \"has_supporting_activity\": <from input> }`. STOP.\n\n   3. If absent, null, or empty → proceed.\n\n2. **Campaign lookup**\n\n   1. **STEP 0 - Pre-resolved campaign_id HARD GATE (check FIRST).**\n      1. Read `work_request_object.campaign_id` from input.\n         1. **If non-null, non-empty, and a 24-character hexadecimal string** → USE IT DIRECTLY as the resolved `campaign_id` for the rest of this run.\n            1. **SKIP** Steps A, B, and C of this section entirely and proceed DIRECTLY to Step 3 (Create task).\n         2. **If null, empty, or missing** → proceed to Step A below.\n            1. (Steps A, B, C below are only reached when `campaign_id` was null/empty in input.)\n   2. **A. Direct lookup.** If `campaign` is non-empty and not \"Other\" (case-insensitive), look it up in [[mappings.txt]] Section 2. Match → `campaign_id` = mapped value. Go to step 3.\n   3. **B. Clarification-text lookup.** If A misses, read the clarification text — the first non-empty trimmed value of `form_fields[\"Additional Information\"]` or `form_fields[\"Description\"]`.\n      1. Search the text for a 24-char hex string. If it equals any value in Section 2 → `campaign_id` = that ID. Go to step 3.\n      2. Otherwise search the text for any Section 2 campaign name as a contiguous substring. First match → `campaign_id` = that row's mapped value. Go to step 3.\n   4. **C. Request clarification + skip.** If A and B both fail, call `add_comment_on_cmp_work_request` exactly once with `work_request_id` from input and `comment` = `\"🤖 Campaign not identified – please copy here the CPN ID of the target Campaign for this Request and Tasks I will create for you.\"`.\n      1. Return `{ \"execution_status\": \"Skipped\", \"reason\": \"Campaign clarification requested via WR comment.\", \"has_supporting_activity\": false, \"work_request_id\": \"<from input>\" }`. Do **not** create the task. Do **not** send email. End execution.\n\n3. **Create task**\n\n   1. Call `create_task_from_work_request` exactly once:\n      1. `work_request_id`, `workflow_id`, `due_at` (= `due_date`), `title` (= `task_title`), `campaign_id` — all from input or step 2.\n      2. `owner_id` = `accepted_by_id` from input — **only if non-null. If null, omit this field entirely.**\n   2. If `task_id` returned is null → send failure email to Email-fail list only → return `{ \"execution_status\": \"Failed\", \"reason\": \"Task creation returned null task_id\", \"has_supporting_activity\": <from input> }`.\n\n4. **Fetch task details**\n\n   1. Call `get_cmp_resource`: `resource_type = \"task\"`, `resource_id` = `task_id`.\n   2. Extract: `first_workflow_step_name`, `cmp_task_url`, `owner_email_address`.\n   3. If `owner_email_address` is null → note it and continue. This is NOT a failure.\n\n5. **Assign substep**\n\n   1. Only if `accepted_by_name` from input is non-null: call `update_task_substep` once with `task_id`, `step_name` = `first_workflow_step_name`, `assignee_type = \"user\"`, `assignee_name` = `accepted_by_name`.\n   2. If `accepted_by_name` is null → skip entirely.\n\n---\n\n## Return\n\nReturn structured JSON with all output fields. Pass `has_supporting_activity`, `accepted_by_id`, `accepted_by_name`, `form_fields`, `template_name`, `primary_activity`, and `request_name` through from input unchanged. Omit `reason` on success.\n\n### On any tool call failure\n\nCall `send_email` once (subject `\"Task creation failed in CMP\"`; to only **Email-fail list.**\n\nReturn `{ \"execution_status\": \"Failed\", \"reason\": \"Task creation failed during execution.\", \"has_supporting_activity\": <from input> }`.",
+      "internal_version": 55,
+      "conversation_mode": false,
+      "first_prompt_mode": "open",
+      "is_enabled_in_chat": false,
+      "memory_token_limit": 700000,
+      "evaluation_criteria": null,
+      "system_prompt_template": "",
+      "enable_auto_tool_prediction": false
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 {
   "template": {
-    "id": "04aa90cd126b424a967c3b51741bd6d7",
+    "id": "6940b0bc95ca42b0b79e0e09c1de7b97",
     "links": {
-      "self": "https://api.cmp.optimizely.com/v3/templates/04aa90cd126b424a967c3b51741bd6d7"
+      "self": "https://api.cmp.optimizely.com/v3/templates/6940b0bc95ca42b0b79e0e09c1de7b97"
     },
     "title": "Web requests (MARKETING)",
     "is_active": true,
@@ -161,25 +161,13 @@
         }
       },
       {
-        "type": "text_area",
-        "label": "Description",
-        "identifier": "62558d079b8f8bb9aabb12c4",
-        "sort_order": 4,
-        "helper_text": "",
-        "is_readonly": false,
-        "is_required": true,
-        "logic_rules": [],
-        "association_id": "0f27a1412eb8dd39dcb144d62cab16d9",
-        "type_specific_meta": null
-      },
-      {
         "type": "radio_button",
-        "label": "Type of Web Request",
+        "label": "Type of Request",
         "identifier": "617143c63ef08f36412f5b54",
         "sort_order": 5,
         "helper_text": "",
         "is_readonly": false,
-        "is_required": true,
+        "is_required": false,
         "logic_rules": [
           {
             "action": {
@@ -235,7 +223,7 @@
           "choices": [
             {
               "id": "617143c63ef08f46152f5b56",
-              "name": "Change of an existing webpage"
+              "name": "Changes on a webpage"
             },
             {
               "id": "617143c63ef08f40ec2f5b55",
@@ -263,63 +251,7 @@
       },
       {
         "type": "dropdown",
-        "label": "Web content type",
-        "identifier": "6489b672b7f9ccb4e957fb84",
-        "sort_order": 7,
-        "helper_text": "What is the type of web page you would like to create?",
-        "is_readonly": false,
-        "is_required": true,
-        "logic_rules": [],
-        "association_id": "e590293ae7974e23b511b134499fe6af",
-        "type_specific_meta": {
-          "choices": [
-            {
-              "id": "6489b672b7f9ccd95a57fb85",
-              "name": "Article"
-            },
-            {
-              "id": "6489b672b7f9cc482257fb86",
-              "name": "Blog"
-            },
-            {
-              "id": "6489b672b7f9cc50c157fb87",
-              "name": "Case study"
-            },
-            {
-              "id": "6489b672b7f9cc5fd657fb88",
-              "name": "Corporate news"
-            },
-            {
-              "id": "6489b672b7f9cce57457fb8d",
-              "name": "Event / Conference / Webinar"
-            },
-            {
-              "id": "6489bc28b7f9cc91a157fef9",
-              "name": "Landing page"
-            },
-            {
-              "id": "6489b672b7f9cc57cd57fb8b",
-              "name": "Other"
-            },
-            {
-              "id": "6489b672b7f9cc18f057fb89",
-              "name": "Publication"
-            },
-            {
-              "id": "6489bc28b7f9cce7f457fef8",
-              "name": "Solution page"
-            },
-            {
-              "id": "6489b672b7f9cc372357fb8a",
-              "name": "Video"
-            }
-          ],
-          "is_multi_select": false
-        }
-      },
-      {
-        "type": "dropdown",
-        "label": "Web page objective",
+        "label": "Webpage Objective",
         "identifier": "64b4ea95a24752ddd022d9d2",
         "sort_order": 8,
         "helper_text": "Please select, what's the goal of this page (Multiselect is possible).",
@@ -392,7 +324,7 @@
         "sort_order": 12,
         "helper_text": "Any other information you want to give the Digital Media team?",
         "is_readonly": false,
-        "is_required": false,
+        "is_required": true,
         "logic_rules": [],
         "association_id": "3d9222aedacf4e769692325753b1d534",
         "type_specific_meta": null
@@ -433,18 +365,7 @@
         "association_id": "6327c8c2067762e6d1f3365a04e7d081",
         "type_specific_meta": null
       },
-      {
-        "type": "text_area",
-        "label": "Description",
-        "identifier": "62558d079b8f8bb9aabb12c4",
-        "sort_order": 16,
-        "helper_text": "Please share the primary goal of this page to better tailor the keywords",
-        "is_readonly": false,
-        "is_required": false,
-        "logic_rules": [],
-        "association_id": "fa54e1b751133bc960a4cdef3ac316b5",
-        "type_specific_meta": null
-      },
+
       {
         "type": "text_area",
         "label": "Link / URL",

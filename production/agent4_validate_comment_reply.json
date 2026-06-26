@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "specialized",
+  "name": "[ES-CMP][PROD] Validate Comment Reply",
+  "output": {
+    "type": "json",
+    "schema": {
+      "type": "object",
+      "required": [
+        "proceed_status"
+      ],
+      "properties": {
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Present on CPN_SKIPPED only."
+        },
+        "proceed_status": {
+          "enum": [
+            "CPN_RESOLVED",
+            "CPN_SKIPPED"
+          ],
+          "type": "string",
+          "description": "Routing signal the workflow Condition matches. CPN_RESOLVED when a valid CPN ID was found and validated; CPN_SKIPPED otherwise. Prefixed tokens so the Condition cannot collide with a stray 'Resolved' substring in the output."
+        },
+        "work_request_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Populated only on CPN_RESOLVED."
+        },
+        "resolved_campaign_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Populated only on CPN_RESOLVED. The 24-char hex CPN ID extracted from the reply and validated against Section 2."
+        }
+      }
+    },
+    "description": ""
+  },
+  "version": "1.0.0",
+  "agent_id": "es-cmp-prod-validate-comment-reply",
+  "file_urls": [
+    {
+      "url": "attachments/agents/es-cmp-prod-validate-comment-reply/mappings.txt",
+      "size": 14158,
+      "type": "text/plain",
+      "description": "mappings.txt"
+    }
+  ],
+  "is_active": true,
+  "is_deleted": false,
+  "parameters": [
+    {
+      "name": "webhook_payload",
+      "type": "object",
+      "default": null,
+      "required": true,
+      "item_type": null,
+      "max_items": null,
+      "min_items": null,
+      "description": "Raw CMP work_request_comment_added webhook payload. Contains data.comment_for.id (work request id) and data.comment.id (new comment id)."
+    }
+  ],
+  "description": "Validates a CMP work_request_comment_added webhook payload. Fetches the work request, gates on whether the WR has any prior bot comment, filters out bot comments, and scans remaining user comments for a CPN ID. Validates against mappings.txt Section 2. Returns CPN_RESOLVED with work_request_id and resolved_campaign_id on match. Returns CPN_SKIPPED silently in all other cases - does NOT post any comments, eliminating webhook re-trigger loops.",
+  "llm_provider": null,
+  "prompt_pills": null,
+  "enabled_tools": [
+    "get_cmp_resource"
+  ],
+  "agent_metadata": {
+    "enable_auto_skill_prediction": false,
+    "enable_auto_skill_prediction_by_tools": false
+  },
+  "inference_type": "simple_with_thinking",
+  "initial_message": null,
+  "prompt_template": "## Role\n\nYou are the Validate Comment Reply agent for the ES-CMP workflow. You receive a CMP `work_request_comment_added` webhook payload ([[webhook_payload]]). The webhook fires for **every** new comment on **every** WR in the connected CMP instance \u2014 including WRs unrelated to this automation. Your job is to:\n\n1. Fetch the work request (which returns its comments in the response).\n2. **Gate:** check whether this WR is managed by our automation (has any prior bot-posted comment). If not, exit silently.\n3. Filter out the bot's own clarification posts.\n4. Scan the remaining (user) comments for a 24-char hex CPN ID.\n5. Validate the CPN ID against Section 2 and return the resolved campaign_id, or skip silently if it doesn't match.\n\nRefer to the attached [[mappings.txt]] for campaign ID validation (Section 2 \u2014 CAMPAIGN MAPPING).\n\n---\n\n## Process\n\n1. **Fetch the work request**\n\n   1. Read `webhook_payload.data.comment_for.id` (the work request's id).\n\n   2. Call `get_cmp_resource` once with:\n\n      - `resource_type` = `\"work_request\"`\n      - `resource_id` = the work_request_id from step 1.1 (trimmed)\n\n2. **Extract comments from the response (no tool call)**\n\n   1. In the response `content` markdown, find the `## Comments` section.\n\n   2. Each comment block looks like and appear newest-first in the response:\n\n      ```\n      ### Comment by [Author] ([timestamp])\n      <p>[comment body HTML]</p>\n      ```\n\n   3. For each block, extract the plain-text body by stripping the HTML tags.\n\n3. **\"Managed by our automation\" GATE (no tool call)**\n\n   Determine whether the WR has at least one bot-posted comment. A comment is a bot comment if its plain-text body (trimmed):\n\n   1. **Primary marker:** starts with `\ud83e\udd16`(robot emoji + space), OR\n   2. **Legacy fallback** (for older test WRs whose bot comments predate the emoji prefix) is exactly one of these strings (case-insensitive):\n      - `Campaign not identified \u2013 please copy here the CPN ID of the target Campaign for this Request and Tasks I will create for you.`\n   3. If **no** comment on the WR matches either criterion \u2192 this WR is not managed by our automation.\n      1. Return `{ \"proceed_status\": \"CPN_SKIPPED\", \"reason\": \"WR has no prior bot interaction; not managed by ES-CMP automation.\" }`. STOP. Do not call any further tools.\n   4. If at least one bot comment exists, build a `bot_comment_set` of all such comments and continue to step 4.\n\n4. **CPN ID extraction (no tool call)**\n\n   From the comments list, **exclude** all bot comments (`bot_comment_set` from step 3). Among the remaining (user) comments, scan in order (newest first). For each user comment, search the plain-text body for any 24-character hexadecimal substring (MongoDB ObjectId pattern \u2014 `[a-f0-9]{24}`, case-insensitive). Take the **first** match found across all user comments.\n\n   1. **No 24-char hex found** in any user comment \u2192 return `{ \"proceed_status\": \"CPN_SKIPPED\", \"reason\": \"No CPN ID found in any user comment on this WR.\" }`. STOP. Do not call any further tools.\n   2. **Found** \u2192 continue with the extracted hex string as `candidate_campaign_id`.\n\n5. **Section 2 validation**\n\n   Check whether `candidate_campaign_id` (lowercased) appears as a value in any row of [[mappings.txt]] Section 2.\n\n   1. **Match found** \u2192 return:\n\n      ```json\n      {\n        \"proceed_status\": \"CPN_RESOLVED\",\n        \"work_request_id\": \"<webhook_payload.data.comment_for.id>\",\n        \"resolved_campaign_id\": \"<candidate_campaign_id>\"\n      }\n      ```\n\n   2. **No match** \u2192 return `{ \"proceed_status\": \"CPN_SKIPPED\", \"reason\": \"CPN ID not found in Section 2 mapping (invalid CPN).\" }`. STOP.\n\n---\n\n## Guardrails\n\n- **Tool call limits:** `get_cmp_resource` exactly once with `resource_type = \"work_request\"`. **No other tool calls under any circumstance.**\n- **Invalid CPN handling:** silent skip. The user discovers the invalid CPN by the absence of task creation in CMP and can reply again with a corrected ID.\n- **Idempotency:** if the same CPN ID was already resolved on a previous webhook (e.g., the user added more comments after the CPN), Agent 2's downstream duplication check prevents duplicate task creation.",
+  "internal_version": 3,
+  "conversation_mode": false,
+  "first_prompt_mode": "open",
+  "is_enabled_in_chat": false,
+  "memory_token_limit": 700000,
+  "evaluation_criteria": null,
+  "system_prompt_template": "",
+  "enable_auto_tool_prediction": false
+}

@@ -1,8 +1,9 @@
 ES-CMP V5 MAPPINGS REFERENCE — PRODUCTION
 ==========================================
 
-All keys are normalised (trimmed, title-cased). Apply the same normalisation before lookup.
-Campaign and activity lookups are case-insensitive (compare lowercased, trimmed values).
+Global lookup rules (apply to all sections unless overridden in-section):
+- Keys are case-insensitive and trim-normalised before matching.
+- Empty / null / unmatched lookups fall through to each consumer agent's Default policy.
 
 ==============================================
 SECTION 1 — WORK REQUEST TEMPLATE MAPPING
@@ -17,62 +18,108 @@ Note: primary_activity_driven = true means the main task workflow and title are 
 Key                       | workflow_id               | title_prefix       | channel_field        | channel_extraction_rule | template_id                       | task_template_id         | primary_activity_driven
 Social Organic            | 685e93e9207f6e746e34d5b7  | Social Organic:    | Social Media Account | before_colon            | b811f6cd459f44debd7843291328a6e2  | (none)                   | false
 Social Paid               | 685ed35727ca4547e80c41a8  | Social Paid:       | Social Media Account | before_colon            | 9ced09b0870241d6b0e087b30dffc9ae  | (none)                   | false
-Web Requests (Marketing)  | 685ecd1c27ca4547e809ac58  | Webpage:           | (none)               | (none)                  | 6940b0bc95ca42b0b79e0e09c1de7b97  | (none)                   | false
+Web Requests (MARKETING)  | 685ecd1c27ca4547e809ac58  | Webpage:           | (none)               | (none)                  | 6940b0bc95ca42b0b79e0e09c1de7b97  | (none)                   | false
+Web Requests (COMMS)      | 64e8a6ac36f36a02c64c8ff8  | Webpage:           | (none)               | (none)                  | 1308958aa60a4d79a1ceb45f23ee3984  | (none)                   | false
 Event Request             | 5e2c7f220b8d133fb85bf6b5  | Event:             | (none)               | (none)                  | 43f2b99e387c45849ec3cf6e9ad824f3  | 68ff8e91d45edb1061ba1d05 | false
-Email Marketing           | 5e20693c96475f735f5a7bd6  | Email:             | (none)               | (none)                  | 5b302517c893421bbd69cbbd7a8fe8ba  | (none)                   | false
+Email marketing           | 5e20693c96475f735f5a7bd6  | Email:             | (none)               | (none)                  | 5b302517c893421bbd69cbbd7a8fe8ba  | (none)                   | false
 Event Info Capture        | 5e2c7f220b8d133fb85bf6b5  | Event:             | (none)               | (none)                  | 7f9b3e1a9bee42898df07424898062b8  | (none)                   | false
 Graphic Design            | 5e25be695fb3865bb9d8daf6  | Graphic:           | (none)               | (none)                  | 0b6da2a790304ca29bdd3caa0378b128  | (none)                   | false
-Sales Enablement Asset    | (none)                    | Sales Asset:       | (none)               | (none)                  | 177b05ca472546c7ab1de2ae2b90d5a1  | (none)                   | false
-Trade Media               | 69f34aba0fa47c27c92aeb45  | Trade Media:       | Social Media Account | before_colon            | 65c7dfc402e44c1da252d267f2b67217  | (none)                   | false
-Video Production          | (none)                    | Video:             | (none)               | (none)                  | 78afc5edf15145a19dc51ca04e0b61ad  | (none)                   | false
-Multichannel Initiative   | (none)                    | Multichannel:      | (none)               | (none)                  | 47aa09c21297458fb11ff5b5091e1d88  | (none)                   | true
-Other                     | (none)                    | Other:             | (none)               | (none)                  | 5b12a896f91f4a62bb59248e676a54e4  | (none)                   | false
+Sales Enablement Asset    | 64edb46c01b1e51420205c44  | Sales Asset:       | (none)               | (none)                  | 177b05ca472546c7ab1de2ae2b90d5a1  | (none)                   | false
+Trade Media               | 69f34acc0fa47c27c92aed1f  | Trade Media:       | Social Media Account | before_colon            | 65c7dfc402e44c1da252d267f2b67217  | (none)                   | false
+Video Production          | 5e25be695fb3865bb9d8daf6  | Video:             | (none)               | (none)                  | 78afc5edf15145a19dc51ca04e0b61ad  | (none)                   | false
+Multichannel Initiative   | 64edb46c01b1e51420205c44  | Multichannel:      | (none)               | (none)                  | 47aa09c21297458fb11ff5b5091e1d88  | (none)                   | true
+Other                     | 64edb46c01b1e51420205c44  | Other:             | (none)               | (none)                  | 5b12a896f91f4a62bb59248e676a54e4  | (none)                   | false
 
 channel_extraction_rule: before_colon = split the field value on ":", take text before first colon and trim.
 template_id: the CMP work request form template ID (from Production instance).
 task_template_id: ID of the task template to apply after task creation (only set for Event Request).
-template_id fallback: if template name lookup fails (e.g. due to a special character prefix in CMP), the agent matches the work request's template_id against the template_id column to identify the correct row.
+Template name lookup is exact-match only (after trim + title-case normalisation). Variants like
+"Social Organic (TL r)" will NOT match "Social Organic" — add a separate row if a variant should be supported.
 
 ==============================================
 SECTION 2 — CAMPAIGN MAPPING
 ==============================================
 Used by: Agent 2 (Create Task)
 Purpose: Maps CMP campaign name to campaign ID.
-Lookup is case-insensitive. Use the _fallback entry when no match is found.
+When direct lookup fails, Agent 2 attempts to extract a CPN ID or campaign name from
+form_fields["Additional Information"] or form_fields["Description"]; if neither yields a
+match, Agent 2 posts a comment on the WRQ requesting the CPN ID and skips task creation.
+No silent fallback campaign exists.
 
-Campaign Name                          | Campaign ID
-Captives & Fronting (2025)             | 6790fdca9e4c32b8e04bc773
-Event: Baden Baden (2025)              | 6762f68891119bf426ba9f1c
-Event: RVS Monte Carlo (2025)          | 6762f45d91119bf426b9b901
-Financial & Structured Solutions (2025)| 6762f9ca91119bf426bcb82e
-Forward in Life (2026)                 | 698cb44b2895de4429678844
-IP/PULSE & Network (2025)              | 6790fc259e4c32b8e04b7488
-RDS Platform Overall (2025)            | 6797e478dad5066600594bd0
-RDS Property Exposure (2025)           | 6761c1ee70572567a853ce16
-Reinsurance Recalibrated (2025)        | 6762f37c91119bf426b97931
-Future Ready Resilience (2025)         | 6762f3a591119bf426b9817c
-Advancing Corporate Insurance Together | 6797e75bdad50666005ac2a3
-_fallback                              | 6996d29710fd8609c9836d29
-
+Campaign Name                                              | Campaign ID
+COMPREND                                                   | 6a0c25b98245c530b7a986f9
+Task Creation Agent                                        | 6a0c27f18245c530b7abb91a
+(New VP) Advancing Corporate Insurance Together (2026)     | 6797e75bdad50666005ac2a3
+Alternative Risk Transfer (2026)                           | 6790fd3d9e4c32b8e04ba712
+Broker Activations (2026)                                  | 677d01d921996c00df85c505
+Captives & Fronting (2026)                                 | 6790fdca9e4c32b8e04bc773
+Claims (2026)                                              | 67f8d19105ecc93714b664ea
+CorSo Other Tasks                                          | 68ac608f400f01174590f9de
+Event: AIRMIC (2026)                                       | 69c3ce2b915977381e545045
+Event: APCIA (2026)                                        | 6a0570447a1082344ba06ec9
+Event: Baden Baden (2026)                                  | 6a0483a358313a80f9715244
+Event: CAP APAC (2026)                                     | 67b84fc995084fcdfc39bced
+Event: CAP EMEA (2026)                                     | 677cfed321996c00df849418
+Event: CAP NAm (2026)                                      | 67b851bc95084fcdfc3b8cc3
+Event: CIAB (2026)                                         | 6a056bfc7a1082344b9ec2d9
+Event: European Captive Forum (2025)                       | 677d007221996c00df85aaee
+Event: Fasecolda (2026)                                    | 6a049204f901312caffe18ac
+Event: FIDES (2026)                                        | 6a048dedf901312caffbeba6
+Event: GloCo LHRe (2025)                                   | 6762f87391119bf426bc2d54
+Event: GVNW (2026)                                         | 677cff9821996c00df84fe9c
+Event: Miami Reinsurance Week 2025                         | 679d1454087f755b8067d40d
+Event: NAMIC (2026)                                        | 6a0566a77a1082344b9d2189
+Event: NICC (2026)                                         | 6a0572ba7a1082344ba1e590
+Event: RIMS (2026)                                         | 69bbf631472d96cea828e877
+Event: RIMS Canada (2026)                                  | 6797e2e0dad5066600583278
+Event: RVS Monte Carlo (2026)                              | 6a044acdb34a3367761c9052
+Event: SIRC (2026)                                         | 6a057a367a1082344ba4ac18
+Executive Comms (2026) - CorSo                             | 67b8c2fa014df17021eb23b2
+Financial & Structured Solutions (2026)                    | 6a2957cb982a16680cf155fb
+Forward in life (2026)                                     | 698cb44b2895de4429678844
+Future-ready Resilience (2026)                             | 6762f3a591119bf426b9817c
+Global Lines of Business (2026) - CorSo                    | 6791061fe7bfbca95d064fb0
+International Programs (2026)                              | 6790fc259e4c32b8e04b7488
+Key L&H Events & Conferences                               | 6a29592f982a16680cf19ae1
+L&H Re Other Tasks                                         | 6a104506ca745a3ae5cda9d8
+L&H Solutions (2026)                                       | 698efd4e9619e0a2c3bef457
+L&H Solutions Other Tasks                                  | 6a291d765fd88640b0700aea
+Life Guide (2026)                                          | 6a292409db03b2b68fd217f6
+MagnumXP (2026)                                            | 698efd719619e0a2c3bef5d6
+Market Events - L&H Re                                     | 6a3157f9df020e11d863e825
+Market Events - P&C Re                                     | 6409190a1a3d454f812786bd           
+P&C Re - Other Tasks                                       | 65c3f4c0e16e0c1ce7fb5fe4
+Parametric (2026)                                          | 6a3391a7805834ceaf8eee4e
+PCSS                                                       | 6a05852775b5416391ce0039
+PromiseXP (2026)                                           | 698efda49619e0a2c3bef8a2
+RDS Across (2026)                                          | 65b297b0be555f1da818e39e         
+RDS Insurance (2026)                                       | 6a075f27c7ba36b427ab38e9
+RDS Platform (2026)                                        | 6a075e8ac7ba36b427aaace2
+Reinsurance Recalibrated (2026)                            | 6762f37c91119bf426b97931
+Silver Economy (2026)                                      | 6a292485db03b2b68fd22118
 
 ==============================================
 SECTION 3 — SUPPORTING ACTIVITY MAPPING
 ==============================================
 Used by: Agent 3 (Supporting Activity)
 Purpose: Maps supporting activity type to workflow ID and brief template ID.
-Lookup is case-insensitive. If a type is not found, skip it.
+If a type is not found, skip it.
 Note: brief_template_id is the task brief form template ID — distinct from the WR form template_id in Section 1.
 
-Activity Type          | workflow_id               | brief_template_id
-Emailing               | 5e20693c96475f735f5a7bd6  | 5b302517c893421bbd69cbbd7a8fe8ba
-Sales Enablement Asset | (none)                    | 177b05ca472546c7ab1de2ae2b90d5a1
-Social Organic         | 685e93e9207f6e746e34d5b7  | b811f6cd459f44debd7843291328a6e2
-Social Paid            | 685ed35727ca4547e80c41a8  | 9ced09b0870241d6b0e087b30dffc9ae
-Trade Media            | 69f34aba0fa47c27c92aeb45  | 48ea0e23b00845168cafd43dc18f6c4c
-Webpage                | 685ecd1c27ca4547e809ac58  | 6940b0bc95ca42b0b79e0e09c1de7b97
-Paid Search            | 63da539973a78d5cd7e99f39  | f432d75c88b24123b8684d9a550c2e4a
-Publication            | 5e0b0b718680d264e17fef08  | (none)
-Paid Display           | 65f83b7456901c130695cd6d  | 2a09ecfbba6f4bedb68fbd2d91d7fc88
+Activity Type                                      | workflow_id                               | brief_template_id
+Emailing (e.g. event invitation, newsletter, etc.) | 5e20693c96475f735f5a7bd6                  | 5b302517c893421bbd69cbbd7a8fe8ba
+Sales Enablement Asset                             | 64edb46c01b1e51420205c44                  | 177b05ca472546c7ab1de2ae2b90d5a1
+Social Organic                                     | 685e93e9207f6e746e34d5b7                  | b811f6cd459f44debd7843291328a6e2
+Social Paid                                        | 685ed35727ca4547e80c41a8                  | 9ced09b0870241d6b0e087b30dffc9ae
+Trade Media                                        | 69f34acc0fa47c27c92aed1f                  | 65c7dfc402e44c1da252d267f2b67217
+Webpage                                            | 685ecd1c27ca4547e809ac58                  | 6940b0bc95ca42b0b79e0e09c1de7b97
+Paid Search                                        | 63da539973a78d5cd7e99f39                  | f432d75c88b24123b8684d9a550c2e4a
+Publication                                        | 5e0b0b718680d264e17fef08                  | (none)
+Paid Display                                       | 65f83b7456901c130695cd6d                  | 2a09ecfbba6f4bedb68fbd2d91d7fc88
+Event                                              | 5e2c7f220b8d133fb85bf6b5                  | 43f2b99e387c45849ec3cf6e9ad824f3
+Graphic Design                                     | 5e25be695fb3865bb9d8daf6                  | 0b6da2a790304ca29bdd3caa0378b128
+Video Production                                   | 5e25be695fb3865bb9d8daf6                  | 78afc5edf15145a19dc51ca04e0b61ad
+Other                                              | 64edb46c01b1e51420205c44                  | 5b12a896f91f4a62bb59248e676a54e4
 
 If workflow_id is (none) or empty: create the task without a workflow_id.
 If brief_template_id is (none) or empty: skip the update_task_brief step for this task.
@@ -84,15 +131,60 @@ SECTION 4 — ROUTING RULE USERS
 Used by: Agent 1 (Process WR)
 Purpose: User IDs assigned automatically via CMP routing rules.
          These are filtered out when identifying the acceptor from the assignees list.
-         Update this list whenever routing rules are added or changed.
 
-To find a user's ID: trigger a WRQ with the routing rule active, then check the
-get_cmp_resource result in the Opal Agent 1 execution log — each entry in the
-assignees array has id and name.
+user_id                     | type       | display_name
+66ebcfacedc2550a0fa7eefc    | individual | Careen Joseph
+63bd6176a517de59cbab2ab9    | individual | Graphic Design
+663347926e6f8a55409800c4    | individual | Jacqueline Navarrete
+618299c291022e5f03a26dae    | individual | Jenn Gibson
+675af947760011013ea1b570    | individual | Jo Leon
+615165845f56ac559cab217e    | individual | Julia Shen
+606ee35d7b0237042469f370    | individual | Kamila Pauliny
+63623fd3c9064b18a363047d    | individual | Lilly Gonzalez
+5e3d6ca69d33f46c3c1c5dfc    | individual | Lisa Ziernicki
+5d94ce11aaa38a239fced7e2    | individual | Moses Dhiraba
+61362e81e5f5bd09e0118e64    | individual | Nadzeya Kuryan
+6964c7def5920111f9942b62    | individual | Natalia Tomkova
+6841968d66f2217facaf2263    | individual | Nina Sukiman
+695e2ff7f573f2ad7dc62ac3    | individual | Oleksii Podpriatov
+6964c7f6179138a5bbcd2c83    | individual | Pavel Bursik
+5e3d6e00f97d654986e94a74    | individual | Roman Bobis
+64a7b5abf63b5323ed6fd25c    | individual | Silvia Barbiero Easter
+684196a966f2217facaf412c    | individual | Wen Ya Ho
+5f76d850e8186405b8339c03    | individual | Yukako Nagashima
+68791257bc68b340649e2a5f    | team       | Events EMEA (Marketing)
+685e7741207f6e746e27d661    | team       | Marketing Services Hub AMERICAS
+685e7756207f6e746e27e892    | team       | Marketing Services Hub APAC
+685e7762207f6e746e27e942    | team       | Marketing Services Hub EMEA
+688a40e5d122c853d509a966    | team       | Sales Enablement (MARKETING)
+6870ba3574fd53c0fdfed231    | team       | Social Organic (MARKETING)
+688a3fc1d122c853d508f6ed    | team       | Social Paid (Marketing - EMEA)
+6808f617d06f0540296dc530    | team       | Video Production
 
-user_id                                         | type       | display_name
-<<REPLACE_user_id: Roman Bobis>>                | individual | Roman Bobis
-<<REPLACE_user_id: Sadhana Acharya>>            | individual | Sadhana Acharya
-<<REPLACE_user_id: American Marketing Services Hub team>> | team | American Marketing Services Hub
-<<REPLACE_user_id: EMEA Marketing Services Hub team>>     | team | EMEA Marketing Services Hub
-<<REPLACE_user_id: APAC Marketing Services Hub team>>     | team | APAC Marketing Services Hub
+
+==============================================
+SECTION 5 — BUSINESS UNIT MAPPING
+==============================================
+Used by: Agent 3.
+Maps Event Request "BUs" → SA brief "Business Unit".
+Group is SA-only (not present in Event Request).
+
+Event Request BUs | SA brief Business Unit
+L&H Re            | Reinsurance L&H
+P&C Re            | Reinsurance P&C
+CorSo             | CorSo
+RDS               | RDS
+
+
+==============================================
+SECTION 6 — COST CENTRE MAPPING
+==============================================
+Used by: Agent 3 (Trade Media brief only).
+Maps Event Request "Event Cost Centre" → Trade Media "Cost Center".
+
+Event Cost Centre | Trade Media Cost Center
+KO58              | KO58
+KO60              | KO60
+KO61              | KO61
+Other             | Other
+KRA5              | KRA5 - RDS

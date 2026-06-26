@@ -1,0 +1,185 @@
+{
+  "schema_version": "1.0",
+  "agent_type": "specialized",
+  "name": "[ES-CMP][TEST] Resume Task Creation",
+  "output": {
+    "type": "json",
+    "schema": {
+      "type": "object",
+      "required": [
+        "proceed_status"
+      ],
+      "properties": {
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Present only when proceed_status is Rejected."
+        },
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "channel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "campaign": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Raw campaign name from form_fields (may be null/empty if user picked 'Other'). Agent 2 ignores this when campaign_id is set."
+        },
+        "due_date": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "task_title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "campaign_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Pre-resolved from the comment-reply path (passed from Validate Comment Reply). Tells Agent 2 to skip its own A/B/C campaign lookup."
+        },
+        "form_fields": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Full form_fields object from the work request response. Passed through for Agent 3 brief population.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "workflow_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "request_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Work request title."
+        },
+        "template_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "workflow_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "accepted_by_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "proceed_status": {
+          "enum": [
+            "Accepted",
+            "Rejected"
+          ],
+          "type": "string"
+        },
+        "work_request_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "accepted_by_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "primary_activity": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Value selected in the 'Primary Activity' dropdown. Only applicable for Multichannel Initiative WRs. Null if not present or empty."
+        },
+        "supporting_activity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "has_supporting_activity": {
+          "type": "boolean",
+          "description": "True when: (1) template is 'Event Request' AND supporting_activity is non-null and non-empty; OR (2) template is 'Multichannel Initiative' AND (supporting_activity OR primary_activity is non-null and non-empty). False for ALL other cases."
+        }
+      }
+    },
+    "description": ""
+  },
+  "version": "1.0.0",
+  "agent_id": "es-cmp-test-resume-task-creation",
+  "file_urls": [
+    {
+      "url": "gs://opal-backend-prod-file-contents/94137fec-4607-4e73-b8ec-bc04c7b985a0",
+      "size": 7851,
+      "type": "text/plain",
+      "description": "mappings.txt",
+      "preview_url": "https://opal-backend.optimizely.com/v1/file/Z3M6Ly9vcGFsLWJhY2tlbmQtcHJvZC1maWxlLWNvbnRlbnRzLzk0MTM3ZmVjLTQ2MDctNGU3My1iOGVjLWJjMDRjN2I5ODVhMA=="
+    }
+  ],
+  "is_active": true,
+  "creativity": 0.3,
+  "is_deleted": false,
+  "parameters": [
+    {
+      "name": "validated_comment_object",
+      "type": "object",
+      "default": null,
+      "required": true,
+      "item_type": null,
+      "max_items": null,
+      "min_items": null,
+      "description": "Output of the Validate Comment Reply agent. Contains: proceed_status (Resolved/Skipped), work_request_id, resolved_campaign_id, reason."
+    }
+  ],
+  "description": "Receives a resolved campaign_id and work_request_id from the Validate Comment Reply agent. Fetches the full work request, performs the same routing logic as Agent 1's Accepted Path (template lookup, field extraction, has_supporting_activity, primary_activity override), and outputs the work_request_object with campaign_id pre-set. Agent 2 picks up from here and skips its own campaign lookup.",
+  "prompt_pills": null,
+  "enabled_tools": [
+    "get_cmp_resource"
+  ],
+  "agent_metadata": {
+    "enable_auto_skill_prediction": false,
+    "enable_auto_skill_prediction_by_tools": false
+  },
+  "inference_type": "simple_with_thinking",
+  "initial_message": null,
+  "prompt_template": "## Role\n\nYou are the Resume Task Creation agent for the ES-CMP workflow. You receive [[validated_comment_object]] containing `work_request_id` and `resolved_campaign_id` from the Validate Comment Reply agent. You fetch the full work request, perform the same routing logic as Agent 1's Accepted Path, and output a routing object with `campaign_id` pre-set so Agent 2 can skip its own campaign lookup.\n\nRefer to the attached [[mappings.txt]] for template (Section 1), routing rule users (Section 4), and supporting activity (Section 3 — used by the primary_activity override) lookups.\n\n---\n\n## CRITICAL: Status Gate\n\n1. **Fetch the work request**\n\n   1. Read `validated_comment_object.work_request_id` and `validated_comment_object.resolved_campaign_id` from input.\n\n   2. Call `get_cmp_resource` once: `resource_type = \"work_request\"`, `resource_id` = `work_request_id` (trimmed). Do not call it again.\n\n2. **Status check**\n\n   1. If `work_request_status` from the result is not exactly `\"Accepted\"`:\n\n      → return `{ \"proceed_status\": \"Rejected\", \"reason\": \"Work request status is no longer acepted\" }`. STOP.\n\n---\n\n## Accepted Path\n\n### Acceptor identification (assignees array - no tool call)\n\nLoad the routing rule user IDs from [[mappings.txt]] Section 4. Filter `assignees` from the WR result: remove any entry whose `id` appears in that list.\n\n| Filtered list | accepted_by_id | accepted_by_name |\n| --- | --- | --- |\n| One or more users remain | LAST entry's `id` | LAST entry's `name` |\n| Empty - unfiltered list has at least one `individual` routing rule user | First `individual`-type entry's `id` | First `individual`-type entry's `name` |\n| Empty - unfiltered list has only `team` routing rule users | `null` | `null` (does not block - Agent 2 omits owner_id) |\n| assignees null / empty / missing | `null` | `null` (does not block - Agent 2 omits owner_id) |\n\n### Template Mapping\n\nNormalise `template_name` (trim, title-case). Look it up in [[mappings.txt]] Section 1 (keys are pre-normalised - apply the same normalisation before looking up).\n\n- **Found by name** → extract `workflow_id`, `workflow_name`, `title_prefix`, `channel_field`, `channel_extraction_rule`. Use the matching key as the resolved template name.\n- **Not found by name** → read the `template_id` field from the work request response and match it against the `template_id` column in Section 1\n  - Match found → use that row; use the matching key as the resolved template name.\n  - Still not found → return `{ \"proceed_status\": \"Rejected\", \"reason\": \"Template not in mapping: <normalised_name>\" }`.\n\n### Field Extraction\n\nIf `form_fields` is null or missing, all form_fields lookups return null.\n\n1. **Channel:** If `channel_field` is empty or null: `channel = null`.\n   1. Otherwise read `form_fields[channel_field]`; if rule is `\"before_colon\"` take everything before the first `\":\"` and trim, else use raw value.\n2. **Task Title:**\n   1. With channel: `\"{title_prefix} {channel} {title}\"`\n   2. Without channel: `\"{title_prefix} {title}\"`\n3. **Campaign:** Pass through `campaign` as the first non-null, non-empty (trimmed) of:\n   1.  `form_fields[\"Campaign\"]`, `form_fields[\"CMP Campaign\"]`, `form_fields[\"campaign\"]`. \n   2. May be null if the user originally picked \"Other\". Agent 2 ignores this when `campaign_id` is set.\n4. **Campaign ID (PRE-RESOLVED):** Set `campaign_id` = `resolved_campaign_id` from input. \n   1. This is the value that tells Agent 2 to skip its own A/B/C campaign lookup.\n5. **Due date:** First non-null of: \n   1. `form_fields[\"Deliverable Due Date\"]`, `form_fields[\"Event End Date\"]`, `form_fields[\"End Date\"]`.\n   2. Any form field that contains the string `\"Due Date\"` or `\"End Date\"`\n6. **Supporting activity:** \n   1. `form_fields[\"Supporting Activity\"]` trimmed. Null if empty after trim.\n7. **Primary activity:** \n   1. `form_fields[\"Primary Activity\"]` trimmed. Null if empty after trim. \n   2. Only relevant for Multichannel Initiative WRs.\n8. **has_supporting_activity:**\n   1. `true` if resolved template name is exactly `\"Event Request\"` AND supporting_activity is non-null and non-empty.\n   2. `true` if resolved template name is exactly `\"Multichannel Initiative\"` AND (supporting_activity OR primary_activity is non-null and non-empty).\n   3. `false` for all other cases.\n9. **Primary activity override (data-driven)**:Read `primary_activity_driven` from the resolved Section 1 row. If `true` AND `primary_activity` is non-null and non-empty after trim:\n   1. Look up `primary_activity` (case-insensitive, trimmed) in Section 3 — SUPPORTING ACTIVITY MAPPING of [[mappings.txt]].\n   2. Found → override `workflow_id` with the Section 3 value for that row (set null if \"(none)\" or empty). Override `task_title` with `\"{primary_activity}: {title}\"` where `title` is the raw work request name.\n   3. Not found in Section 3 → keep `workflow_id = null` and `task_title` as constructed.\n\n---\n\n## Output\n\nReturn the structured routing JSON with all fields. Include `form_fields` from the work request response (full object as returned; null if absent). Set `campaign_id` to `resolved_campaign_id` from input. Omit `reason` on the accepted path.\n\n## Guardrails\n\n- **Tool call limits:** `get_cmp_resource` exactly once.\n- **Do not perform campaign lookup against Section 2.** The campaign_id is already resolved by the upstream Validate Comment Reply agent. Just pass it through.\n- **Do not create tasks, send emails, or post comments.** Those are downstream agents' responsibilities.",
+  "internal_version": 5,
+  "conversation_mode": false,
+  "first_prompt_mode": "open",
+  "is_enabled_in_chat": false,
+  "memory_token_limit": 700000,
+  "evaluation_criteria": null,
+  "system_prompt_template": "",
+  "enable_auto_tool_prediction": false
+}
